@@ -369,6 +369,8 @@ h1, h2, h3, h4, h5, h6 {
     margin-right: 20px;
     font-size: .7em;
     height: 700px;
+    position: relative;
+    z-index: 99;
 }
 
 .image-credit a{
