@@ -31,7 +31,7 @@ function Precovery() {
 
       <section id="hero">
         <div className="hero-container">
-          <h1>Test the Precovery Service</h1>
+          <h1>Test our Precovery Service</h1>
           <h2>Try it on your own orbit today!</h2>
           <a href="#about" className="btn-get-started scrollto">Get Started</a>
         </div>

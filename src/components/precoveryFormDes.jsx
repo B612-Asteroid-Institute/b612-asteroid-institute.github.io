@@ -61,6 +61,17 @@ const PrecoveryFormDes = () => {
 
           </Grid>
           <br></br>
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="raised-button-file"
+            multiple
+            type="file"
+          />
+            <Button fullWidth variant="raised" component="span" >
+              Upload
+            </Button>
+            <br></br>
           <Button color="primary" variant="contained" fullWidth onClick={formik.handleSubmit}>
             Submit
           </Button>
