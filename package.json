@@ -1,7 +1,7 @@
 {
-  "name": "b612-asteroid-institute-react",
+  "name": "b612-asteroid-institute.github.io",
   "version": "0.1.0",
-  "homepage": "https://ntellis.github.io/b612-asteroid-institute-ra",
+  "homepage": "https://b612-asteroid-institute.github.io",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.2",
