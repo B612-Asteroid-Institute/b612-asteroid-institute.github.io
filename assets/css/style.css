@@ -90,7 +90,7 @@ h1, h2, h3, h4, h5, h6 {
 #header .logo img {
   padding: 0;
   margin: 0;
-  max-height: 40px;
+  max-height: 60px;
 }
 @media (max-width: 768px) {
   #header .logo h1 {
@@ -360,6 +360,21 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 24px;
     margin-bottom: 30px;
   }
+}
+
+.image-credit {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    margin-right: 20px;
+    font-size: .7em;
+    height: 700px;
+    position: relative;
+    z-index: 99;
+}
+
+.image-credit a{
+    color: #b4b4b4;
 }
 
 /*--------------------------------------------------------------
@@ -804,6 +819,10 @@ section {
 }
 .team .member:hover .social {
   opacity: 1;
+}
+
+#supporting-team{
+  padding-top: 2em;
 }
 
 /*--------------------------------------------------------------
