@@ -1,11 +1,12 @@
 {
   "name": "b612-asteroid-institute.github.io",
   "version": "0.1.0",
-  "homepage": "https://b612-asteroid-institute.github.io",
+  "homepage": "https://adam.b612.ai",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
+    "@mui/lab": "^5.0.0-alpha.73",
     "@mui/material": "^5.5.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",
@@ -17,9 +18,9 @@
     "axios": "^0.26.1",
     "bootstrap": "^5.1.3",
     "express": "^4.17.3",
-    "formik": "^2.2.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.28.1",
     "react-router-dom": "^6.2.2",
     "react-scripts": "5.0.0",
     "typescript": "^4.6.2",
@@ -27,7 +28,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "predeploy": "npm run build",
+    "predeploy": "npm run build && cp CNAME build/CNAME",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",

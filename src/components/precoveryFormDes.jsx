@@ -1,6 +1,4 @@
 // import { render } from '../@testing-library/react';
-import { useFormik } from 'formik';
-// import { Formik, Field, Form } from 'formik';
 import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -9,30 +7,35 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Grid from '@mui/material/Grid';
+import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 
 
-const axios = require('axios').default;
+// const axios = require('axios').default;
 
-const validationSchema = yup.object({
-});
 
 const PrecoveryFormDes = () => {
 
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const { register, control, setValue } = useFormContext();
 
-  const onFormSubmit = async (values) => {
-    debugger
-    await sleep(3000);
-    console.log("DONE")
-    // alert(JSON.stringify(values, null, 2));
+
+  const uploadFile = (event) => {
+    let file = event.target.files[0];
+    console.log(file);
+    const reader = new FileReader()
+
+    reader.onload = function () {
+      setValue('desInput', reader.result)
+    }
+    // console.log(reader.result)
+    if (file) {
+      reader.readAsText(file)
+
+      console.log(reader.result)
+      // axios.post('/files', data)...
+    }
   }
-  const formik = useFormik({
-    initialValues: {
-      desInput: 'S0000001a  COM 1.251458729448 0.382243999742 9.304721017758 252.063850160767 185.610748171983 54067.969963746829 10.315000000000 54466.000000000000 1 6 -1 MOPS',
-    },
-    validationSchema: validationSchema,
-    onSubmit: onFormSubmit
-  });
+
+
   return (
     <>
       {/* {
@@ -41,41 +44,45 @@ const PrecoveryFormDes = () => {
           <div>Complete </div>
       } */}
       <div>
-        <form onSubmit={formik.handleSubmit}>
-          <br></br>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="desInput"
-                name="desInput"
-                label="DesInput"
-                multiline
-                rows={4}
-                value={formik.values.desInput}
-                onChange={formik.handleChange}
-                error={formik.touched.desInput && Boolean(formik.errors.desInput)}
-                helperText={formik.touched.desInput && formik.errors.desInput}
-              />
-            </Grid>
+        <br></br>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
 
-          </Grid>
-          <br></br>
-          <input
-            accept="image/*"
-            style={{ display: 'none' }}
-            id="raised-button-file"
-            multiple
-            type="file"
-          />
-            <Button fullWidth variant="raised" component="span" >
-              Upload
-            </Button>
+            <Controller
+              control={control}
+              name="desInput"
+              render={({ field: { onChange, value, ref } }) => (
+                <TextField
+                  fullWidth
+                  label="DesInput"
+                  multiline
+                  rows={4}
+                  value={value}
+                  onChange={onChange}
+                />
+
+              )}
+
+            />
             <br></br>
-          <Button color="primary" variant="contained" fullWidth onClick={formik.handleSubmit}>
-            Submit
-          </Button>
-        </form>
+
+            <br></br>
+            <Button
+              variant="contained" fullWidth
+              component="label"
+            >
+              Upload File
+              <input
+                {...register("desFile")}
+                onChange={uploadFile}
+                type="file"
+                hidden
+              />
+            </Button>
+          </Grid>
+
+        </Grid>
+        <br></br>
       </div>
     </>
   )
