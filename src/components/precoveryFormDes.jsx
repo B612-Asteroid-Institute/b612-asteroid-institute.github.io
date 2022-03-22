@@ -9,10 +9,6 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Grid from '@mui/material/Grid';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 
-
-// const axios = require('axios').default;
-
-
 const PrecoveryFormDes = () => {
 
   const { register, control, setValue } = useFormContext();
@@ -26,10 +22,8 @@ const PrecoveryFormDes = () => {
     reader.onload = function () {
       setValue('desInput', reader.result)
     }
-    // console.log(reader.result)
     if (file) {
       reader.readAsText(file)
-
       console.log(reader.result)
       // axios.post('/files', data)...
     }
@@ -38,11 +32,6 @@ const PrecoveryFormDes = () => {
 
   return (
     <>
-      {/* {
-        postResult ?
-          <div>"Loading" </div> :
-          <div>Complete </div>
-      } */}
       <div>
         <br></br>
         <Grid container spacing={2}>

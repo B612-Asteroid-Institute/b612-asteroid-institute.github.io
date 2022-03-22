@@ -27,8 +27,8 @@ const PrecoveryFormSingle = () => {
             label={label}
             value={value}
             onChange={onChange}
-            // error={formik.touched.y && Boolean(formik.errors.y)}
-            // helperText={formik.touched.y && formik.errors.y}
+          // error={formik.touched.y && Boolean(formik.errors.y)}
+          // helperText={formik.touched.y && formik.errors.y}
           />
         )}
       />
@@ -53,8 +53,6 @@ const PrecoveryFormSingle = () => {
               aria-labelledby="demo-radio-buttons-group-label"
               value={value}
               onChange={onChange}
-              // error={formik.touched.coordinateSystem && Boolean(formik.errors.coordinateSystem)}
-              // helperText={formik.touched.coordinateSystem && formik.errors.coordinateSystem}
               label="Coordinate System"
             >
               <FormControlLabel value="cartesian" control={<Radio />} label="Cartesian" />
@@ -66,37 +64,90 @@ const PrecoveryFormSingle = () => {
         />
         <br></br>
         {
-            getValues("coordinateSystem") === "cartesian" ?
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <ControlledText name={"x"} label={'X'}/>
-                </Grid>
-                <Grid item xs={4}>
-                  
-                <ControlledText name={"y"} label={'Y'}/>
-                </Grid>
-                <Grid item xs={4}>
-                  
-                <ControlledText name={"z"} label={'Z'}/>
-                </Grid>
-
-                <Grid item xs={4}>
-                  
-                <ControlledText name={"vx"} label={'VX'}/>
-                </Grid>
-                <Grid item xs={4}>
-                  
-                <ControlledText name={"vy"} label={'VY'}/>
-                </Grid>
-                <Grid item xs={4}>
-                  
-                <ControlledText name={"vz"} label={'VZ'}/>
-                </Grid>
+          getValues("coordinateSystem") === "cartesian" ?
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <ControlledText name={"x"} label={'X'} />
               </Grid>
-              :
-              <></>
-          }
-          <br></br>
+              <Grid item xs={4}>
+                <ControlledText name={"y"} label={'Y'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"z"} label={'Z'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"vx"} label={'VX'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"vy"} label={'VY'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"vz"} label={'VZ'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"mjd_tdb"} label={'Epoch (MJD TDB)'} />
+              </Grid>
+            </Grid>
+            :
+            <></>
+        }
+        {
+          getValues("coordinateSystem") === "cometary" ?
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <ControlledText name={"q"} label={'q'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"e"} label={'e'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"i"} label={'i'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"an"} label={'an'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"ap"} label={'ap'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"tp"} label={'tp'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"mjd_tdbCom"} label={'Epoch (MJD TDB)'} />
+              </Grid>
+            </Grid>
+            :
+            <></>
+        }
+        {
+          getValues("coordinateSystem") === "keplerian" ?
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <ControlledText name={"a"} label={'a'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"eKep"} label={'e'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"iKep"} label={'i'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"anKep"} label={'an'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"apKep"} label={'ap'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"ma"} label={'ma'} />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"mjd_tdbKep"} label={'Epoch (MJD TDB)'} />
+              </Grid>
+            </Grid>
+            :
+            <></>
+        }
+        <br></br>
       </div>
     </>
   )
