@@ -18,8 +18,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 import { CSVLink } from 'react-csv'
 import axios from 'axios';
+import { map } from 'lodash'
 
 interface Observation {
+  orbit_id: string,
   catalog_id: string
   ra: number
   dra: number
@@ -35,6 +37,7 @@ interface Observation {
   mjd: number
   obscode: string
 }
+
 
 // const validationSchema = yup.object({
 //   x: yup
@@ -62,20 +65,20 @@ function Precovery() {
       "vy": 1.01225247e-02,
       "vz": -4.12588907e-04,
       'mjd_tdb': 5.65340001e+04,
-      "q": 1, 
-      "e": 1, 
-      "i": 1, 
-      "an": 1, 
-      "ap": 1, 
-      "tp": 1, 
-      "mjd_tdbCom":5.65340001e+04,
-      "a": 3.19410998e+00, 
-      "eKep": 1.94124171e-01, 
-      "iKep": 2.76026153e+01, 
-      "anKep": 3.14253651e+02, 
-      "apKep": 2.29583820e+02, 
-      "ma": 1.35804981e+02, 
-      "mjd_tdbKep":5.65340001e+04,
+      "q": 1,
+      "e": 1,
+      "i": 1,
+      "an": 1,
+      "ap": 1,
+      "tp": 1,
+      "mjd_tdbCom": 5.65340001e+04,
+      "a": 3.19410998e+00,
+      "eKep": 1.94124171e-01,
+      "iKep": 2.76026153e+01,
+      "anKep": 3.14253651e+02,
+      "apKep": 2.29583820e+02,
+      "ma": 1.35804981e+02,
+      "mjd_tdbKep": 5.65340001e+04,
     },
   });
 
@@ -109,27 +112,35 @@ function Precovery() {
       else if (methods.getValues("coordinateSystem") === "keplerian") {
         const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = methods.getValues()
         const stateVector = {
-          a, 
-          e: eKep, 
-          i: iKep, 
-          an: anKep, 
-          ap: apKep, 
-          ma, 
+          a,
+          e: eKep,
+          i: iKep,
+          an: anKep,
+          ap: apKep,
+          ma,
           mjd_tdb: mjd_tdbKep
         }
-        req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector }) 
+        req = await axios.post("http://localhost:80/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector })
+        // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector }) 
       }
-      console.log(req)
-        const matches = req.data.matches
-        setPrecoveryResults(matches)
-    }
-    else {
-      req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": methods.getValues("desInput"), "file_type": "des" })
       console.log(req)
       const matches = req.data.matches
       setPrecoveryResults(matches)
     }
-  };
+    else {
+      req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": methods.getValues("desInput"), "file_type": "des" })
+      console.log(req)
+      // const matches = req.data.matches
+      const matches = map(req.data.matches, (m) => {
+        return (map(m[1], (obs: Observation) => {
+          let newObservation = { ...obs }
+          newObservation.orbit_id = m[0]
+          return newObservation
+        }))
+      }).flat()
+      setPrecoveryResults(matches)
+    }
+  }
 
   const watchFields = methods.watch();
 
@@ -137,21 +148,33 @@ function Precovery() {
     <div className="App">
       <Header />
 
-      <section id="hero">
+      <section id="heroPrecovery">
         <div className="hero-container">
           <h1>Test our Precovery Service</h1>
-          <h2>Try it on your own orbit today!</h2>
-          <a href="#about" className="btn-get-started scrollto">Get Started</a>
         </div>
       </section>
 
       <section id="about" className="about">
         <div className="container">
-
           <div className="row content">
+            <div className="col-lg-12">
+              <h2>What is Precovery?</h2>
+              <h3>The Asteroid Precovery Service extends the observational arc of candidate asteroids by searching the NOIRLab catalog for moving objects consistent with an input state vector.  Asteroid Precovery returns the list of observations (time, RA, DEC), and image cutouts showing the candidate precovery objects along with the state vector location at the corresponding times.
+                <br></br>
+                <br></br>
+                <b>About the NOIRLab catalog:</b> The NoirLab source catalog contains sky images over 7 years down to roughly 23rd magnitude. For more information on the NOIRLab Dataset <a href={'https://datalab.noirlab.edu/nscdr2/index.php'} target={"_blank"} >click here</a>.
+              </h3>
+
+              <br></br>
+              <br></br>
+            </div>
+
+          </div>
+          <div className="row content">
+
             <div className="col-lg-4">
-              <h2>Test your favorite orbit</h2>
-              <h3>B612 Adam's precovery service searches historical data in the NOIRLab Source Catalog (NSC) dataset, along your defined orbit within a tolerance. For more information on the technique used, see: #####</h3>
+              <h4>Test An Orbit</h4>
+              <h5>State vectors can be input in Cartesian, Keplerian, or Cometary coordinates either as a single state vector, or via a .DES file. Precovery returns moving objects within this angular tolerance of the predicted location of the state vector at the time of the NOIRLab image.  For now this is a single angular tolerance of 1 arc second .</h5>
             </div>
             <div className="col-lg-8 pt-4 pt-lg-0">
               <FormProvider {...methods} >
@@ -201,6 +224,9 @@ function Precovery() {
                 </form>
               </FormProvider>
             </div>
+
+
+
 
           </div>
 
