@@ -8,9 +8,10 @@ import '../vendor/boxicons/css/boxicons.min.css'
 import '../vendor/glightbox/css/glightbox.min.css'
 import '../vendor/remixicon/remixicon.css'
 import '../vendor/swiper/swiper-bundle.min.css'
+import {v4 as uuidv4} from "uuid"
 
 function Header() {
-
+  const user = uuidv4()
   return (
       <header id="header" className="fixed-top d-flex align-items-center header-transparent">
         <div className="container d-flex align-items-center justify-content-between">
@@ -29,7 +30,7 @@ function Header() {
               {/* <li><a className="nav-link scrollto" href="#research">Algorithms</a></li> */}
               {/* <li><a className="nav-link scrollto" href="#team">Team</a></li> */}
               <li>
-                <Link className="nav-link" to="/precovery">Precovery</Link>
+                <Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link>
               </li>
               <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
             </ul>

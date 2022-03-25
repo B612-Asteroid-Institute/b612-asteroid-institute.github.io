@@ -10,10 +10,15 @@ import '../vendor/boxicons/css/boxicons.min.css'
 import '../vendor/glightbox/css/glightbox.min.css'
 import '../vendor/remixicon/remixicon.css'
 import '../vendor/swiper/swiper-bundle.min.css'
+import CSS from 'csstype';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import Grid from '@mui/material/Grid';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
+import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 import { CSVLink } from 'react-csv'
@@ -55,9 +60,10 @@ function Precovery() {
 
   const methods = useForm({
     defaultValues: {
-      inputType: "des",
-      desInput: 'S0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
-      coordinateSystem: 'cartesian',
+      "inputType": "des",
+      "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
+      "coordinateSystem": 'cartesian',
+      "sampleObjectPicker": "default",
       "x": 2.29984500e+00,
       "y": -1.22649119e+00,
       "z": 3.82684685e-01,
@@ -79,35 +85,53 @@ function Precovery() {
       "apKep": 2.29583820e+02,
       "ma": 1.35804981e+02,
       "mjd_tdbKep": 5.65340001e+04,
+      "threshold": 0.00027,
+      "start_mjd": 0,
+      "end_mjd": 56534
     },
   });
 
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  //Sample objects that the user can select and copy into the form to test Precovery
+  const sampleObjects: { [key: string]: any } = {
+    "1": {
+      "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_Pasljs fjlwefwke AR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS'
+    }
+  }
+
+  const ControlledText = ({ name, label }: {name: any, label: string}) => {
+    return (
+      <Controller
+        control={methods.control}
+        name={name}
+        render={({ field: { onChange, value, ref } }) => (
+          <TextField
+            fullWidth
+            label={label}
+            value={value}
+            onChange={onChange}
+          />
+        )}
+      />
+    )
+  }
+  
 
   const onSubmit = async (data: any) => {
 
-    // await sleep(3000);
     console.log(methods.getValues("inputType"))
     console.log(data)
-    // setPrecoveryResults([{
-    //   ra: 1,
-    //   dec: 1,
-    //   ra_sigma: 1,
-    //   dec_sigma: 1,
-    //   mag: 1,
-    //   mag_sigma: 1,
-    //   id: 88348264
-    // }])
 
     let req = { data: { matches: [] } }
     if (methods.getValues("inputType") === "single") {
+      const {coordinateSystem, start_mjd, end_mjd, threshold} = methods.getValues()
+      const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, threshold }
       if (methods.getValues("coordinateSystem") === "cartesian") {
         const { x, y, z, vx, vy, vz, mjd_tdb } = methods.getValues()
-        req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), x, y, z, vx, vy, vz, mjd_tdb })
+        req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
       }
       else if (methods.getValues("coordinateSystem") === "cometary") {
         const { q, e, i, an, ap, tp, mjd_tdbCom } = methods.getValues()
-        req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom })
+        req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom, ...commonInputs })
       }
       else if (methods.getValues("coordinateSystem") === "keplerian") {
         const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = methods.getValues()
@@ -120,7 +144,7 @@ function Precovery() {
           ma,
           mjd_tdb: mjd_tdbKep
         }
-        req = await axios.post("http://localhost:80/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector })
+        req = await axios.post("http://localhost:80/precovery/singleorbit", { ...stateVector, ...commonInputs  })
         // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector }) 
       }
       console.log(req)
@@ -140,6 +164,10 @@ function Precovery() {
       }).flat()
       setPrecoveryResults(matches)
     }
+  }
+
+  const sampleObjectOnChangeHandler = (value: string) => {
+    if (value !== 'default') methods.setValue('desInput', sampleObjects[value].desInput)
   }
 
   const watchFields = methods.watch();
@@ -174,28 +202,76 @@ function Precovery() {
 
             <div className="col-lg-4">
               <h4>Test An Orbit</h4>
-              <h5>State vectors can be input in Cartesian, Keplerian, or Cometary coordinates either as a single state vector, or via a .DES file. Precovery returns moving objects within this angular tolerance of the predicted location of the state vector at the time of the NOIRLab image.  For now this is a single angular tolerance of 1 arc second .</h5>
+              <h5>State vectors can be input in Cartesian, Keplerian, or Cometary coordinates either as a single state vector, or via a .DES file. Precovery returns moving objects within this angular tolerance of the predicted location of the state vector at the time of the NOIRLab image.  For now this is a single angular tolerance of 1 arc second .
+                <br></br>
+                <br></br>
+                After you have input your orbit, press Submit. When the process completes, a download button will appear, and you can download the precovered observations in .csv. Precovery can take up to a minute for each observation, so do not be alarmed if the submit button keeps spinning!
+              </h5>
             </div>
             <div className="col-lg-8 pt-4 pt-lg-0">
               <FormProvider {...methods} >
                 <form onSubmit={methods.handleSubmit(onSubmit)}>
-                  <Controller
-                    control={methods.control}
-                    name="inputType"
-                    render={({ field: { onChange, value, ref } }) => (
-                      <RadioGroup
-                        row
-                        value={value}
-                        onChange={onChange} // send value to hook form
-                      >
-                        <FormControlLabel value="des" control={<Radio />} label=".Des File" />
-                        <FormControlLabel value="single" control={<Radio />} label="Single Orbit" />
-                      </RadioGroup>
-                    )}
-                  />
+                  <Grid container spacing={2}>
+
+                    <Grid item xs={4}>
+                      <Controller
+                        control={methods.control}
+                        name="inputType"
+                        render={({ field: { onChange, value, ref } }) => (
+                          <RadioGroup
+                            row
+                            value={value}
+                            onChange={onChange} // send value to hook form
+                          >
+                            <FormControlLabel value="des" control={<Radio />} label=".Des File" />
+                            <FormControlLabel value="single" control={<Radio />} label="Single Orbit" />
+                          </RadioGroup>
+                        )}
+                      />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Controller
+                        control={methods.control}
+                        name="sampleObjectPicker"
+                        render={({ field: { onChange, value, ref } }) => (
+                          <Select
+                            value={value}
+                            label="a"
+                            fullWidth
+                            onChange={(value) => {
+                              onChange(value)
+                              sampleObjectOnChangeHandler(value.target.value)
+                            }}
+                          >
+                            <MenuItem value={"default"}>Pick a Sample Object</MenuItem>
+                            <MenuItem value={"1"}>TEST</MenuItem>
+                            {/* <MenuItem value={"20"}>Twenty</MenuItem> */}
+                            {/* <MenuItem value={"30"}>Thirty</MenuItem> */}
+                          </Select>
+                        )}
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <br></br>
+
+                  <br></br>
+                  <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                      <ControlledText name={"start_mjd"} label={'Start MJD'} />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <ControlledText name={"end_mjd"} label={'End MJD'} />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <ControlledText name={"threshold"} label={'Threshold'} />
+                    </Grid>
+                  </Grid>
                   {
                     methods.getValues("inputType") === "single" ?
-                      <PrecoveryFormSingle /> :
+                      <PrecoveryFormSingle
+                        ControlledText={ControlledText}
+                      /> :
                       <PrecoveryFormDes />
                   }
 
@@ -215,10 +291,14 @@ function Precovery() {
 
                   <br></br>
                   {precoveryResults.length > 0 ?
+
+                  <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
                     <Button color="secondary" variant="contained" fullWidth >
-                      <CSVLink data={precoveryResults} filename={"precoveryResults.csv"}> here</CSVLink>
-                    </Button> :
-                    <></>
+                      <div className={"text-undecorated"}>Download</div>
+                    </Button>
+                  </CSVLink>
+                  :
+                  <></>
                   }
 
                 </form>

@@ -1,5 +1,3 @@
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material/FormLabel';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -12,28 +10,10 @@ const axios = require('axios').default;
 
 
 
-const PrecoveryFormSingle = () => {
+const PrecoveryFormSingle = (props) => {
 
+  const {ControlledText} = props
   const { register, control, getValues } = useFormContext();
-
-  const ControlledText = ({ name, label }) => {
-    return (
-      <Controller
-        control={control}
-        name={name}
-        render={({ field: { onChange, value, ref } }) => (
-          <TextField
-            fullWidth
-            label={label}
-            value={value}
-            onChange={onChange}
-          // error={formik.touched.y && Boolean(formik.errors.y)}
-          // helperText={formik.touched.y && formik.errors.y}
-          />
-        )}
-      />
-    )
-  }
 
   return (
     <>
