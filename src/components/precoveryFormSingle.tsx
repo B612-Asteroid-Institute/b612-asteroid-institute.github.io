@@ -10,9 +10,9 @@ const axios = require('axios').default;
 
 
 
-const PrecoveryFormSingle = (props) => {
+const PrecoveryFormSingle = (props: any) => {
 
-  const {ControlledText} = props
+  const { ControlledText } = props
   const { register, control, getValues } = useFormContext();
 
   return (
@@ -33,7 +33,6 @@ const PrecoveryFormSingle = (props) => {
               aria-labelledby="demo-radio-buttons-group-label"
               value={value}
               onChange={onChange}
-              label="Coordinate System"
             >
               <FormControlLabel value="cartesian" control={<Radio />} label="Cartesian" />
               <FormControlLabel value="cometary" control={<Radio />} label="Cometary" />

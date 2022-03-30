@@ -14,7 +14,7 @@ const PrecoveryFormDes = () => {
   const { register, control, setValue } = useFormContext();
 
 
-  const uploadFile = (event) => {
+  const uploadFile = (event: any) => {
     let file = event.target.files[0];
     console.log(file);
     const reader = new FileReader()
@@ -40,7 +40,7 @@ const PrecoveryFormDes = () => {
             <Controller
               control={control}
               name="desInput"
-              render={({ field: { onChange, value, ref } }) => (
+              render={({ field: { onChange, onBlur, value, ref } }) => (
                 <TextField
                   fullWidth
                   label="DesInput"
@@ -48,6 +48,7 @@ const PrecoveryFormDes = () => {
                   rows={4}
                   value={value}
                   onChange={onChange}
+                  onBlur={onBlur}
                 />
 
               )}
