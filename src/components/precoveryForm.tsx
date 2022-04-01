@@ -141,7 +141,8 @@ function PrecoveryForm() {
     "apKep": "2.29583820e+02",
     "ma": "1.35804981e+02",
     "mjd_tdbKep": "5.65340001e+04",
-    "start_mjd": "57947",
+    // "start_mjd": "57947",
+    "start_mjd": "55482",
     "end_mjd": "58037"
   }
   const sampleObjects: { [key: string]: any } = {
@@ -208,7 +209,7 @@ function PrecoveryForm() {
             ma,
             mjd_tdb: mjd_tdbKep
           }
-          req = await axios.post("http://localhost:80/precovery/singleorbit", { ...stateVector, ...commonInputs })
+          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { ...stateVector, ...commonInputs })
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
@@ -311,7 +312,7 @@ function PrecoveryForm() {
                   onChange={onChange}
                   onBlur={() => { 
                     onBlur() 
-                    methods.setValue("end_mjd", (parseFloat(methods.getValues("start_mjd")) + 90).toString()) 
+                    // methods.setValue("end_mjd", (parseFloat(methods.getValues("start_mjd")) + 90).toString()) 
                   }}
                 />
               )}
@@ -326,7 +327,7 @@ function PrecoveryForm() {
                   fullWidth
                   label={"End MJD"}
                   value={value}
-                  disabled
+                  // disabled
                   onChange={onChange}
                 />
               )}
@@ -344,7 +345,7 @@ function PrecoveryForm() {
 
 
         {!methods.formState.isSubmitting ?
-          <Button color="primary" variant="contained" fullWidth type="submit" disabled={methods.formState.isSubmitted || !methods.formState.isValid } >
+          <Button color="primary" variant="contained" fullWidth type="submit" disabled={!methods.formState.isValid } >
             Submit
           </Button> :
           <LoadingButton color="primary" loading fullWidth variant="outlined">
@@ -355,7 +356,9 @@ function PrecoveryForm() {
         <br></br>
 
         <br></br>
-        {displayError?.errorCode ?
+        {
+        
+        displayError?.errorCode ?
 
           <Alert severity="error">
             <AlertTitle>{displayError.errorCode}</AlertTitle>
@@ -375,6 +378,11 @@ function PrecoveryForm() {
               <div className={"text-undecorated"}>Download</div>
             </Button>
           </CSVLink>
+          :
+          methods.formState.isSubmitted ? 
+          <Alert severity="warning">
+            No precoveries were found for this orbit in the specified time interval.
+          </Alert>
           :
           <></>
         }
