@@ -2,13 +2,13 @@ import React from 'react';
 import logo from './logo.svg';
 import { Outlet, Link } from "react-router-dom";
 import Header from "./components/header"
-import './css/App.css';
-import './vendor/bootstrap/css/bootstrap.min.css'
+// import './vendor/bootstrap/css/bootstrap.min.css'
 import './vendor/bootstrap-icons/bootstrap-icons.css'
 import './vendor/boxicons/css/boxicons.min.css'
 import './vendor/glightbox/css/glightbox.min.css'
 import './vendor/remixicon/remixicon.css'
 import './vendor/swiper/swiper-bundle.min.css'
+import './css/App.css';
 
 function App() {
 
@@ -160,9 +160,10 @@ function App() {
             NEOs.
           </p>
           <ul>
-            <li><i className="ri-checkbox-circle-fill">Discover asteroids without the need for tracklets</i></li>
-          <li><i className="ri-checkbox-circle-fill">97% efficient at finding asteroids in ZTF, 1.5-2x better than existing codes</i></li>
+            <li><i className="ri-checkbox-circle-fill"></i>Discover asteroids without the need for tracklets</li>
+          <li><i className="ri-checkbox-circle-fill"></i>97% efficient at finding asteroids in ZTF, 1.5-2x better than existing codes</li>
         </ul>
+        
     </div>
         </div >
 

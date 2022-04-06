@@ -142,7 +142,7 @@ function PrecoveryForm() {
     "ma": "1.35804981e+02",
     "mjd_tdbKep": "5.65340001e+04",
     // "start_mjd": "57947",
-    "start_mjd": "55482",
+    "start_mjd": "55927",
     "end_mjd": "58037"
   }
   const sampleObjects: { [key: string]: any } = {
