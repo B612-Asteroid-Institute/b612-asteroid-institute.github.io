@@ -214,9 +214,7 @@ const  PrecoveryForm = () => {
         return Math.min(oldProgress + diff, 99);
       });
     }, 500);
-    await new Promise(resolve => setTimeout(resolve, 20000));
-    console.log(formMethods.getValues("inputType"))
-    console.log(data)
+    
     let req = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
