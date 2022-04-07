@@ -9,7 +9,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Grid from '@mui/material/Grid';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 
-const PrecoveryFormDes = () => {
+const PrecoveryFormDes = (props: any) => {
 
   const { register, control, setValue } = useFormContext();
 

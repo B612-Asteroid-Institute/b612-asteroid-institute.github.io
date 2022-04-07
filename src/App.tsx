@@ -1,6 +1,3 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Outlet, Link } from "react-router-dom";
 import Header from "./components/header"
 // import './vendor/bootstrap/css/bootstrap.min.css'
 import './vendor/bootstrap-icons/bootstrap-icons.css'
@@ -55,7 +52,7 @@ function App() {
               </p>
               <p>
                 ADAM leverages state-of-the-art algorithms developed in collaboration with UW's <a href="https://dirac.astro.washington.edu">DiRAC Institute</a>,
-                and the scalability of the <a href="https://cloud.google.com/">Google Cloud Platform</a> to deliver:
+                and the scalability of the <a className="noDecoA" href="https://cloud.google.com/">Google Cloud Platform</a> to deliver:
               </p>
               <ul>
                 <li><i className="ri-check-double-line"></i>Open-source astrodynamics services.</li>

@@ -20,14 +20,17 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Alert from '@mui/material/Alert';
+import Divider from '@mui/material/Divider';
 import AlertTitle from '@mui/material/AlertTitle';
-import Stack from '@mui/material/Stack';
+import LinearProgress from '@mui/material/LinearProgress';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import { CSVLink } from 'react-csv'
 import axios from 'axios';
-import { map } from 'lodash'
+import { map, intersection } from 'lodash'
+const queryString = require('query-string');
+
 
 interface Observation {
   orbit_id: string,
@@ -106,17 +109,32 @@ const validationSchema = Yup.object().shape({
     .typeError("Must be a number")
     .min(55927, 'Dataset used starts at MJD 55927')
     .max(580307, 'Dataset used ends at MJD 57947'),
+  "end_mjd": Yup.number()
+    .typeError("Must be a number")
+    .min(55927, 'Dataset used starts at MJD 55927')
+    .max(580307, 'Dataset used ends at MJD 57947')
+    .moreThan(yup.ref("start_mjd")),
+  "radius": Yup.number()
+    .typeError("Must be a number")
+    .min(0.0, 'Must pick a positive value')
+    .max(10.0, 'Values over 10" will result in numerous false positives'),
 });
 
 
+
+
 // get functions to build form with useForm() hook
-function PrecoveryForm() {
+const  PrecoveryForm = () => {
 
   const [precoveryResults, setPrecoveryResults] = useState<Observation[]>([]);
   const [displayError, setDisplayError] = useState<DisplayError>();
+  const [progress, setProgress] = React.useState(0);
+  // We will be modulating this for longer .des files
+  const [precoveryRuntime, setPrecoveryRuntime] = React.useState(20);
 
+  var parsed = queryString.parse(window.location.href);
   const defaultValues = {
-    "inputType": "des",
+    "inputType": "single",
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'cartesian',
     "sampleObjectPicker": "default",
@@ -143,7 +161,8 @@ function PrecoveryForm() {
     "mjd_tdbKep": "5.65340001e+04",
     // "start_mjd": "57947",
     "start_mjd": "55927",
-    "end_mjd": "58037"
+    "end_mjd": "58037",
+    "radius": "1",
   }
   const sampleObjects: { [key: string]: any } = {
     "1": {
@@ -151,24 +170,26 @@ function PrecoveryForm() {
     }
   }
 
-  const methods = useForm({
+  const formMethods = useForm({
     resolver: yupResolver(validationSchema), 
     defaultValues, 
     mode: "onBlur" 
   })
 
-  const { errors } = methods.formState;
+  const { errors } = formMethods.formState;
   //Sample objects that the user can select and copy into the form to test Precovery
 
 
-  const ControlledText = ({ name, label }: { name: any, label: string }) => {
+  const ControlledText = ({ name, label, error }: { name: any, label: string , error: any }) => {
     return (
       <Controller
-        control={methods.control}
+        control={formMethods.control}
         name={name}
         render={({ field: { onChange, onBlur, value, ref } }) => (
           <TextField
             fullWidth
+            error={error ? true : false}
+            helperText={error ? error.message : ''}
             label={label}
             value={value}
             onChange={onChange}
@@ -181,43 +202,46 @@ function PrecoveryForm() {
 
 
   const onSubmit = async (data: any) => {
-
-    console.log(methods.getValues("inputType"))
+    
+    // This sets up an interval timer to handle the progress bar. it is cleared on return
+    setProgress(0)
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        // if (oldProgress === 100) {
+        //   return 0;
+        // }
+        const diff = Math.random() * 100 / (precoveryRuntime);
+        return Math.min(oldProgress + diff, 99);
+      });
+    }, 500);
+    await new Promise(resolve => setTimeout(resolve, 20000));
+    console.log(formMethods.getValues("inputType"))
     console.log(data)
-
     let req = { data: { matches: [] } }
     try {
-      if (methods.getValues("inputType") === "single") {
-        const { coordinateSystem, start_mjd, end_mjd } = methods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd }
-        if (methods.getValues("coordinateSystem") === "cartesian") {
-          const { x, y, z, vx, vy, vz, mjd_tdb } = methods.getValues()
+      if (formMethods.getValues("inputType") === "single") {
+        const { coordinateSystem, start_mjd, end_mjd, radius } = formMethods.getValues()
+        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "threshold": radius }
+        if (formMethods.getValues("coordinateSystem") === "cartesian") {
+          const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
           req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
         }
-        else if (methods.getValues("coordinateSystem") === "cometary") {
-          const { q, e, i, an, ap, tp, mjd_tdbCom } = methods.getValues()
+        else if (formMethods.getValues("coordinateSystem") === "cometary") {
+          const { q, e, i, an, ap, tp, mjd_tdbCom } = formMethods.getValues()
           req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom, ...commonInputs })
         }
-        else if (methods.getValues("coordinateSystem") === "keplerian") {
-          const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = methods.getValues()
-          const stateVector = {
-            a,
-            e: eKep,
-            i: iKep,
-            an: anKep,
-            ap: apKep,
-            ma,
-            mjd_tdb: mjd_tdbKep
-          }
+        else if (formMethods.getValues("coordinateSystem") === "keplerian") {
+          const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = formMethods.getValues()
+          const stateVector = { a, e: eKep, i: iKep, an: anKep, ap: apKep, ma, mjd_tdb: mjd_tdbKep }
           req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { ...stateVector, ...commonInputs })
-          // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": methods.getValues("coordinateSystem"), ...stateVector }) 
+          // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
         const matches = req.data.matches
         setPrecoveryResults(matches)
       }
       else {
-        req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": methods.getValues("desInput"), "file_type": "des" })
+        req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": formMethods.getValues("desInput"), "file_type": "des" })
         console.log(req)
         // const matches = req.data.matches
         const matches = map(req.data.matches, (m) => {
@@ -238,25 +262,48 @@ function PrecoveryForm() {
       })
     }
 
+    return () => {
+      clearInterval(timer);
+    }
+
+  }
+
+  const submitDisabled = () => {
+    const errorKeys = Object.keys(errors)
+    const coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
+    let specificErrors = []
+    if (formMethods.getValues("inputType") === "single") {
+      if (formMethods.getValues("coordinateSystem") === "cartesian") {
+        specificErrors = intersection(["x", "y", "z", "vx", "vy", "vz", 'mjd_tdb'], errorKeys)
+      }
+      else if (formMethods.getValues("coordinateSystem") === "cometary") {
+        specificErrors = intersection(["q", "e", "i", "an", "ap", "tp", 'mjd_tdbCom'], errorKeys)
+      }
+      else if (formMethods.getValues("coordinateSystem") === "cometary") {
+        specificErrors = intersection(["a", "eKep", "iKep", "anKep", "apKep", "ma", 'mjd_tdbKep'], errorKeys)
+      }
+    }
+    // console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys])
+    return coreErrors.length + specificErrors.length > 0
   }
 
   const sampleObjectOnChangeHandler = (value: string) => {
-    if (value !== 'default') methods.setValue('desInput', sampleObjects[value].desInput)
+    if (value !== 'default') formMethods.setValue('desInput', sampleObjects[value].desInput)
   }
 
-  const watchFields = methods.watch(["inputType",
+  const watchFields = formMethods.watch(["inputType",
     "desInput",
     "coordinateSystem",
     "sampleObjectPicker",]);
 
   return (
-    <FormProvider {...methods} >
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+    <FormProvider {...formMethods} >
+      <form onSubmit={formMethods.handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-
-          <Grid item xs={4}>
+          {parsed.single !== "true" &&
+           <Grid item xs={4}>
             <Controller
-              control={methods.control}
+              control={formMethods.control}
               name="inputType"
               render={({ field: { onChange, value, ref } }) => (
                 <RadioGroup
@@ -264,15 +311,16 @@ function PrecoveryForm() {
                   value={value}
                   onChange={onChange} // send value to hook form
                 >
-                  <FormControlLabel value="des" control={<Radio />} label=".Des File" />
                   <FormControlLabel value="single" control={<Radio />} label="Single Orbit" />
+                  <FormControlLabel value="des" control={<Radio />} label=".Des File" />
                 </RadioGroup>
               )}
             />
-          </Grid>
-          <Grid item xs={4}>
+          </Grid>}
+
+          <Grid item xs={6}>
             <Controller
-              control={methods.control}
+              control={formMethods.control}
               name="sampleObjectPicker"
               render={({ field: { onChange, value, ref } }) => (
                 <Select
@@ -300,7 +348,7 @@ function PrecoveryForm() {
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <Controller
-              control={methods.control}
+              control={formMethods.control}
               name={"start_mjd"}
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <TextField
@@ -312,7 +360,7 @@ function PrecoveryForm() {
                   onChange={onChange}
                   onBlur={() => { 
                     onBlur() 
-                    // methods.setValue("end_mjd", (parseFloat(methods.getValues("start_mjd")) + 90).toString()) 
+                    // formMethods.setValue("end_mjd", (parseFloat(formMethods.getValues("start_mjd")) + 90).toString()) 
                   }}
                 />
               )}
@@ -320,11 +368,13 @@ function PrecoveryForm() {
           </Grid>
           <Grid item xs={4}>
             <Controller
-              control={methods.control}
+              control={formMethods.control}
               name={"end_mjd"}
               render={({ field: { onChange, value, ref } }) => (
                 <TextField
                   fullWidth
+                  error={errors.end_mjd ? true : false}
+                  helperText={errors.end_mjd ? errors.end_mjd.message : ''}
                   label={"End MJD"}
                   value={value}
                   // disabled
@@ -333,10 +383,15 @@ function PrecoveryForm() {
               )}
             />
           </Grid>
+          <Grid item xs={4}>
+            <ControlledText name={"radius"} label={'Radius (Arcsec)'} error={errors.radius} />
+          </Grid>
         </Grid>
 
+        <Divider sx={{marginTop:3, marginBottom:2}} />
+
         {
-          methods.getValues("inputType") === "single" ?
+          formMethods.getValues("inputType") === "single" ?
             <PrecoveryFormSingle
               ControlledText={ControlledText}
             /> :
@@ -344,43 +399,43 @@ function PrecoveryForm() {
         }
 
 
-        {!methods.formState.isSubmitting ?
-          <Button color="primary" variant="contained" fullWidth type="submit" disabled={!methods.formState.isValid } >
+        {!formMethods.formState.isSubmitting ?
+          <Button sx={{marginTop:3}} color="primary" variant="contained" fullWidth type="submit" disabled={submitDisabled()} >
             Submit
           </Button> :
-          <LoadingButton color="primary" loading fullWidth variant="outlined">
+          <LoadingButton sx={{marginTop:3}} color="primary" loading fullWidth variant="outlined">
             Submit
           </LoadingButton>
         }
 
-        <br></br>
+        {formMethods.formState.isSubmitting &&
+        <LinearProgress
+            variant="determinate"
+            sx={{height: 10,
+              borderRadius: 5, marginTop:3}}
+            value={progress} />
+        }
 
-        <br></br>
         {
-        
-        displayError?.errorCode ?
 
-          <Alert severity="error">
+        displayError?.errorCode &&
+
+          <Alert sx={{marginTop:3}} severity="error">
             <AlertTitle>{displayError.errorCode}</AlertTitle>
             {displayError.errorString}
           </Alert>
-          :
-          <></>
         }
 
-        <br></br>
-
-        <br></br>
         {precoveryResults.length > 0 ?
 
           <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
-            <Button color="secondary" variant="contained" fullWidth >
+            <Button sx={{marginTop:3}} color="secondary" variant="contained" fullWidth >
               <div className={"text-undecorated"}>Download</div>
             </Button>
           </CSVLink>
           :
-          methods.formState.isSubmitted ? 
-          <Alert severity="warning">
+          formMethods.formState.isSubmitted ? 
+          <Alert sx={{marginTop:3}} severity="warning">
             No precoveries were found for this orbit in the specified time interval.
           </Alert>
           :

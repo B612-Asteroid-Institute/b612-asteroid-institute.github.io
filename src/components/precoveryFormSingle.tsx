@@ -13,7 +13,9 @@ const axios = require('axios').default;
 const PrecoveryFormSingle = (props: any) => {
 
   const { ControlledText } = props
-  const { register, control, getValues } = useFormContext();
+
+  const { register, control, getValues, formState } = useFormContext();
+  const { errors } =  formState
 
   return (
     <>
@@ -46,25 +48,25 @@ const PrecoveryFormSingle = (props: any) => {
           getValues("coordinateSystem") === "cartesian" ?
             <Grid container spacing={2}>
               <Grid item xs={4}>
-                <ControlledText name={"x"} label={'X'} />
+                <ControlledText name={"x"} label={'X (au)'} error={errors.x}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"y"} label={'Y'} />
+                <ControlledText name={"y"} label={'Y (au)'} error={errors.y}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"z"} label={'Z'} />
+                <ControlledText name={"z"} label={'Z (au)'} error={errors.z}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"vx"} label={'VX'} />
+                <ControlledText name={"vx"} label={'VX (au/s)'} error={errors.vx}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"vy"} label={'VY'} />
+                <ControlledText name={"vy"} label={'VY (au/s)'} error={errors.vy}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"vz"} label={'VZ'} />
+                <ControlledText name={"vz"} label={'VZ (au/s)'} error={errors.vz}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"mjd_tdb"} label={'Epoch (MJD TDB)'} />
+                <ControlledText name={"mjd_tdb"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdb}  />
               </Grid>
             </Grid>
             :
@@ -74,25 +76,25 @@ const PrecoveryFormSingle = (props: any) => {
           getValues("coordinateSystem") === "cometary" ?
             <Grid container spacing={2}>
               <Grid item xs={4}>
-                <ControlledText name={"q"} label={'q'} />
+                <ControlledText name={"q"} label={'q (au)'} error={errors.q}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"e"} label={'e'} />
+                <ControlledText name={"e"} label={'e'} error={errors.e}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"i"} label={'i'} />
+                <ControlledText name={"i"} label={'i (deg)'} error={errors.i}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"an"} label={'an'} />
+                <ControlledText name={"an"} label={'an (deg)'} error={errors.an}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"ap"} label={'ap'} />
+                <ControlledText name={"ap"} label={'ap (deg)'} error={errors.ap}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"tp"} label={'tp'} />
+                <ControlledText name={"tp"} label={'tp (MJD)'} error={errors.tp}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"mjd_tdbCom"} label={'Epoch (MJD TDB)'} />
+                <ControlledText name={"mjd_tdbCom"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbCom}  />
               </Grid>
             </Grid>
             :
@@ -102,25 +104,25 @@ const PrecoveryFormSingle = (props: any) => {
           getValues("coordinateSystem") === "keplerian" ?
             <Grid container spacing={2}>
               <Grid item xs={4}>
-                <ControlledText name={"a"} label={'a'} />
+                <ControlledText name={"a"} label={'a (au)'} error={errors.a}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"eKep"} label={'e'} />
+                <ControlledText name={"eKep"} label={'e'} error={errors.eKep}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"iKep"} label={'i'} />
+                <ControlledText name={"iKep"} label={'i (deg)'} error={errors.iKep}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"anKep"} label={'an'} />
+                <ControlledText name={"anKep"} label={'an (deg)'} error={errors.anKep}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"apKep"} label={'ap'} />
+                <ControlledText name={"apKep"} label={'ap (deg)'} error={errors.apKep}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"ma"} label={'ma'} />
+                <ControlledText name={"ma"} label={'ma (deg)'} error={errors.ma}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"mjd_tdbKep"} label={'Epoch (MJD TDB)'} />
+                <ControlledText name={"mjd_tdbKep"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbKep}  />
               </Grid>
             </Grid>
             :
