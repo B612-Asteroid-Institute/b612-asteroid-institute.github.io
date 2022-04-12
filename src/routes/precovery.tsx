@@ -48,7 +48,7 @@ function Precovery() {
 
             <div className="col-lg-4">
               <h4>Test An Orbit</h4>
-              <h5>State vectors can be input in Cartesian, Keplerian, or Cometary coordinates either as a single state vector, or via a .DES file. Precovery returns moving objects within this angular tolerance of the predicted location of the state vector at the time of the NOIRLab image.  For now this is a single angular tolerance of 1 arc second .
+              <h5>State vectors can be input in Cartesian, Keplerian, or Cometary coordinates either as a single state vector, or via a .DES file. Precovery returns moving objects within this angular tolerance of the predicted location of the state vector at the time of the NOIRLab image. For now this is a single angular tolerance of 1 arc second.  Note that you may want to re-fit your orbit with newly found data points, and then search again for precovered observations with the updated orbit.  The reference frame used is that of JPL Horizons.
                 <br></br>
                 <br></br>
                 After you have input your orbit, press Submit. When the process completes, a download button will appear, and you can download the precovered observations in .csv. Precovery can take up to a minute for each observation, so do not be alarmed if the submit button keeps spinning!
