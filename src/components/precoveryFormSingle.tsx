@@ -57,13 +57,13 @@ const PrecoveryFormSingle = (props: any) => {
                 <ControlledText name={"z"} label={'Z (au)'} error={errors.z}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"vx"} label={'VX (au/s)'} error={errors.vx}  />
+                <ControlledText name={"vx"} label={'VX (au/day)'} error={errors.vx}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"vy"} label={'VY (au/s)'} error={errors.vy}  />
+                <ControlledText name={"vy"} label={'VY (au/day)'} error={errors.vy}  />
               </Grid>
               <Grid item xs={4}>
-                <ControlledText name={"vz"} label={'VZ (au/s)'} error={errors.vz}  />
+                <ControlledText name={"vz"} label={'VZ (au/day)'} error={errors.vz}  />
               </Grid>
               <Grid item xs={4}>
                 <ControlledText name={"mjd_tdb"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdb}  />

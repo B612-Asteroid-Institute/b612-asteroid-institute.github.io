@@ -22,7 +22,6 @@ function App() {
           <h1>Asteroid Discovery, Analysis, and Mapping</h1>
           <h2>The Computational Engine to Map our Solar System
           </h2>
-          <a href="#about" className="btn-get-started scrollto">Get Started</a>
         </div>
       </section>
 

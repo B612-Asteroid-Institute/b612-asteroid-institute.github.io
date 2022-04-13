@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as yup from 'yup';
 import PrecoveryFormDes from "./precoveryFormDes"
 import PrecoveryFormSingle from "./precoveryFormSingle"
+import SampleObjectPicker from "./sampleObjectPicker"
+import ResultsTable from "./resultsTable"
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
@@ -29,11 +31,15 @@ import * as Yup from 'yup';
 import { CSVLink } from 'react-csv'
 import axios from 'axios';
 import { map, intersection } from 'lodash'
+import { csv } from "d3-fetch"
+import { dateRangePickerDayClasses } from '@mui/lab';
+import { ConstructionOutlined } from '@mui/icons-material';
 const queryString = require('query-string');
 
 
+
 interface Observation {
-  orbit_id: string,
+  orbit_id?: string
   catalog_id: string
   ra: number
   dra: number
@@ -50,16 +56,30 @@ interface Observation {
   obscode: string
 }
 
+// interface SampleObject {
+//   M: string
+//   a: string
+//   ap: string
+//   e: string
+//   i: string
+//   mjd_tdb: string
+//   obj_id: string
+//   q: string
+//   raan: string
+//   tp: string
+//   vx: string
+//   vy: string
+//   vz: string
+//   x: string
+//   y: string
+//   z: string
+// }
+
 interface DisplayError {
   errorCode: string,
   errorString: string,
 }
 
-// Yup.setLocale({
-//   number: {
-//     notType: "MJD Must be a number"
-//   }
-// })
 
 const validationSchema = Yup.object().shape({
   "desInput": Yup.string(),
@@ -107,12 +127,13 @@ const validationSchema = Yup.object().shape({
     .typeError("Must be a number"),
   "start_mjd": Yup.number()
     .typeError("Must be a number")
-    .min(55927, 'Dataset used starts at MJD 55927')
-    .max(580307, 'Dataset used ends at MJD 57947'),
+    .min(56193, 'Dataset used starts at MJD 56193')
+    .max(58804, 'Dataset used ends at MJD 58804')
+    .lessThan(yup.ref("end_mjd")),
   "end_mjd": Yup.number()
     .typeError("Must be a number")
-    .min(55927, 'Dataset used starts at MJD 55927')
-    .max(580307, 'Dataset used ends at MJD 57947')
+    .min(56193, 'Dataset used starts at MJD 56193')
+    .max(58804, 'Dataset used ends at MJD 58804')
     .moreThan(yup.ref("start_mjd")),
   "radius": Yup.number()
     .typeError("Must be a number")
@@ -127,10 +148,11 @@ const validationSchema = Yup.object().shape({
 const  PrecoveryForm = () => {
 
   const [precoveryResults, setPrecoveryResults] = useState<Observation[]>([]);
+  const [sampleObjects, setSampleObjects] = useState<any[]>([]);
   const [displayError, setDisplayError] = useState<DisplayError>();
   const [progress, setProgress] = React.useState(0);
   // We will be modulating this for longer .des files
-  const [precoveryRuntime, setPrecoveryRuntime] = React.useState(20);
+  const [precoveryRuntime, setPrecoveryRuntime] = React.useState(5);
 
   var parsed = queryString.parse(window.location.href);
   const defaultValues = {
@@ -160,20 +182,16 @@ const  PrecoveryForm = () => {
     "ma": "1.35804981e+02",
     "mjd_tdbKep": "5.65340001e+04",
     // "start_mjd": "57947",
-    "start_mjd": "55927",
-    "end_mjd": "58037",
+    "start_mjd": "56193",
+    "end_mjd": "58804",
     "radius": "1",
-  }
-  const sampleObjects: { [key: string]: any } = {
-    "1": {
-      "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_Pasljs fjlwefwke AR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS'
-    }
   }
 
   const formMethods = useForm({
     resolver: yupResolver(validationSchema), 
     defaultValues, 
-    mode: "onBlur" 
+    mode: "onBlur",
+    reValidateMode: "onBlur"
   })
 
   const { errors } = formMethods.formState;
@@ -199,22 +217,25 @@ const  PrecoveryForm = () => {
       />
     )
   }
-
+  
 
   const onSubmit = async (data: any) => {
     
     // This sets up an interval timer to handle the progress bar. it is cleared on return
     setProgress(0)
+    setPrecoveryResults([])
     const timer = setInterval(() => {
       setProgress((oldProgress) => {
         // if (oldProgress === 100) {
         //   return 0;
         // }
         const diff = Math.random() * 100 / (precoveryRuntime);
+        console.log(formMethods.formState.isSubmitting)
         return Math.min(oldProgress + diff, 99);
       });
     }, 500);
-    
+
+
     let req = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
@@ -260,11 +281,14 @@ const  PrecoveryForm = () => {
       })
     }
 
+  // clearInterval(timer)
     return () => {
-      clearInterval(timer);
+      clearInterval(timer)
     }
 
   }
+
+// WIP for handling whether the submit button should be disabled. Doesn't work for now.
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(errors)
@@ -285,9 +309,6 @@ const  PrecoveryForm = () => {
     return coreErrors.length + specificErrors.length > 0
   }
 
-  const sampleObjectOnChangeHandler = (value: string) => {
-    if (value !== 'default') formMethods.setValue('desInput', sampleObjects[value].desInput)
-  }
 
   const watchFields = formMethods.watch(["inputType",
     "desInput",
@@ -316,26 +337,10 @@ const  PrecoveryForm = () => {
             />
           </Grid>}
 
-          <Grid item xs={6}>
-            <Controller
-              control={formMethods.control}
-              name="sampleObjectPicker"
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  value={value}
-                  label="a"
-                  fullWidth
-                  onChange={(value) => {
-                    onChange(value)
-                    sampleObjectOnChangeHandler(value.target.value)
-                  }}
-                >
-                  <MenuItem value={"default"}>Pick a Sample Object</MenuItem>
-                  <MenuItem value={"1"}>TEST</MenuItem>
-                  {/* <MenuItem value={"20"}>Twenty</MenuItem> */}
-                  {/* <MenuItem value={"30"}>Thirty</MenuItem> */}
-                </Select>
-              )}
+          <Grid item xs={9}>
+            <SampleObjectPicker
+              sampleObjects={sampleObjects}
+              setSampleObjects={setSampleObjects}
             />
           </Grid>
         </Grid>
@@ -416,29 +421,35 @@ const  PrecoveryForm = () => {
 
         {
 
-        displayError?.errorCode &&
+          displayError?.errorCode &&
 
-          <Alert sx={{marginTop:3}} severity="error">
+          <Alert sx={{ marginTop: 3 }} severity="error">
             <AlertTitle>{displayError.errorCode}</AlertTitle>
             {displayError.errorString}
           </Alert>
         }
 
-        {precoveryResults.length > 0 ?
+        {precoveryResults.length > 0 && formMethods.formState.isSubmitted?
+          <>
+            <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
+              <Button sx={{ marginTop: 3 }} color="secondary" variant="contained" fullWidth >
+                <div className={"text-undecorated"}>Download</div>
+              </Button>
+            </CSVLink>
 
-          <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
-            <Button sx={{marginTop:3}} color="secondary" variant="contained" fullWidth >
-              <div className={"text-undecorated"}>Download</div>
-            </Button>
-          </CSVLink>
+            <ResultsTable
+              precoveryResults={precoveryResults}
+            />
+          </>
           :
-          formMethods.formState.isSubmitted ? 
-          <Alert sx={{marginTop:3}} severity="warning">
-            No precoveries were found for this orbit in the specified time interval.
-          </Alert>
-          :
-          <></>
+          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting) ?
+            <Alert sx={{ marginTop: 3 }} severity="warning">
+              No precoveries were found for this orbit in the specified time interval.
+            </Alert>
+            :
+            <></>
         }
+
 
       </form>
     </FormProvider>
