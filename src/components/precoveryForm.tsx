@@ -152,7 +152,7 @@ const  PrecoveryForm = () => {
   const [displayError, setDisplayError] = useState<DisplayError>();
   const [progress, setProgress] = React.useState(0);
   // We will be modulating this for longer .des files
-  const [precoveryRuntime, setPrecoveryRuntime] = React.useState(5);
+  const [precoveryRuntime, setPrecoveryRuntime] = React.useState(45);
 
   var parsed = queryString.parse(window.location.href);
   const defaultValues = {
@@ -240,7 +240,7 @@ const  PrecoveryForm = () => {
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius } = formMethods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "threshold": radius }
+        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1/3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
           req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
