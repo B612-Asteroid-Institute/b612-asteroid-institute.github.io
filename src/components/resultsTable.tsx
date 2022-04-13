@@ -17,25 +17,6 @@ import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-fo
 import { csv } from "d3-fetch"
 
 
-const row = {
-  catalog_id: "c4d_150311_003652_ooi_VR_v1",
-ddec: -0.000051789554468939514,
-dec: 16.53926456592501,
-dec_sigma: 0.000019780833333333332,
-distance: 0.00005239925114412638,
-dra: -0.000008314166009881774,
-filter: "VR",
-id: "c4d.420637.47.114",
-mag: 22.128057,
-mag_sigma: 0.062972,
-mjd: 57092.02328086179,
-obscode: "W84",
-ra: 73.69622206574982,
-ra_sigma: 0.000018487777777777778,
-}
-const rows = [row, row, row,row, row, row,row, row, row,row, row, row,row, row, row,row, row, row,row, row, row,]
-
-
 
 const ResultsTable = (props: any) => {
 

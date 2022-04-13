@@ -34,6 +34,7 @@ import { map, intersection } from 'lodash'
 import { csv } from "d3-fetch"
 import { dateRangePickerDayClasses } from '@mui/lab';
 import { ConstructionOutlined } from '@mui/icons-material';
+import { updateReturn } from 'typescript';
 const queryString = require('query-string');
 
 
@@ -224,13 +225,13 @@ const  PrecoveryForm = () => {
     // This sets up an interval timer to handle the progress bar. it is cleared on return
     setProgress(0)
     setPrecoveryResults([])
+    setDisplayError(undefined)
     const timer = setInterval(() => {
       setProgress((oldProgress) => {
         // if (oldProgress === 100) {
         //   return 0;
         // }
         const diff = Math.random() * 100 / (precoveryRuntime);
-        console.log(formMethods.formState.isSubmitting)
         return Math.min(oldProgress + diff, 99);
       });
     }, 500);
@@ -281,14 +282,12 @@ const  PrecoveryForm = () => {
       })
     }
 
-  // clearInterval(timer)
-    return () => {
-      clearInterval(timer)
-    }
+    clearInterval(timer)
+    return
 
   }
 
-// WIP for handling whether the submit button should be disabled. Doesn't work for now.
+  // WIP for handling whether the submit button should be disabled. Doesn't work for now.
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(errors)
