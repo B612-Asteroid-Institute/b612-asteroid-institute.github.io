@@ -36,14 +36,43 @@ const PrecoveryFormSingle = (props: any) => {
               value={value}
               onChange={onChange}
             >
+              <FormControlLabel value="keplerian" control={<Radio />} label="Keplerian" />
               <FormControlLabel value="cartesian" control={<Radio />} label="Cartesian" />
               <FormControlLabel value="cometary" control={<Radio />} label="Cometary" />
-              <FormControlLabel value="keplerian" control={<Radio />} label="Keplerian" />
             </RadioGroup>
 
           )}
         />
         <br></br>
+        
+        {
+          getValues("coordinateSystem") === "keplerian" ?
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <ControlledText name={"a"} label={'a (au)'} error={errors.a}  />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"eKep"} label={'e'} error={errors.eKep}  />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"iKep"} label={'i (deg)'} error={errors.iKep}  />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"anKep"} label={'an (deg)'} error={errors.anKep}  />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"apKep"} label={'ap (deg)'} error={errors.apKep}  />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"ma"} label={'ma (deg)'} error={errors.ma}  />
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"mjd_tdbKep"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbKep}  />
+              </Grid>
+            </Grid>
+            :
+            <></>
+        }
         {
           getValues("coordinateSystem") === "cartesian" ?
             <Grid container spacing={2}>
@@ -95,34 +124,6 @@ const PrecoveryFormSingle = (props: any) => {
               </Grid>
               <Grid item xs={4}>
                 <ControlledText name={"mjd_tdbCom"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbCom}  />
-              </Grid>
-            </Grid>
-            :
-            <></>
-        }
-        {
-          getValues("coordinateSystem") === "keplerian" ?
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <ControlledText name={"a"} label={'a (au)'} error={errors.a}  />
-              </Grid>
-              <Grid item xs={4}>
-                <ControlledText name={"eKep"} label={'e'} error={errors.eKep}  />
-              </Grid>
-              <Grid item xs={4}>
-                <ControlledText name={"iKep"} label={'i (deg)'} error={errors.iKep}  />
-              </Grid>
-              <Grid item xs={4}>
-                <ControlledText name={"anKep"} label={'an (deg)'} error={errors.anKep}  />
-              </Grid>
-              <Grid item xs={4}>
-                <ControlledText name={"apKep"} label={'ap (deg)'} error={errors.apKep}  />
-              </Grid>
-              <Grid item xs={4}>
-                <ControlledText name={"ma"} label={'ma (deg)'} error={errors.ma}  />
-              </Grid>
-              <Grid item xs={4}>
-                <ControlledText name={"mjd_tdbKep"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbKep}  />
               </Grid>
             </Grid>
             :

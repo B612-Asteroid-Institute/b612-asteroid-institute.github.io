@@ -146,7 +146,7 @@ const validationSchema = Yup.object().shape({
 
 
 // get functions to build form with useForm() hook
-const  PrecoveryForm = () => {
+const PrecoveryForm = () => {
 
   const [precoveryResults, setPrecoveryResults] = useState<Observation[]>([]);
   const [sampleObjects, setSampleObjects] = useState<any[]>([]);
@@ -159,7 +159,7 @@ const  PrecoveryForm = () => {
   const defaultValues = {
     "inputType": "single",
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
-    "coordinateSystem": 'cartesian',
+    "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
     "x": "2.29984500e+00",
     "y": "-1.22649119e+00",
@@ -189,8 +189,8 @@ const  PrecoveryForm = () => {
   }
 
   const formMethods = useForm({
-    resolver: yupResolver(validationSchema), 
-    defaultValues, 
+    resolver: yupResolver(validationSchema),
+    defaultValues,
     mode: "onBlur",
     reValidateMode: "onBlur"
   })
@@ -199,7 +199,7 @@ const  PrecoveryForm = () => {
   //Sample objects that the user can select and copy into the form to test Precovery
 
 
-  const ControlledText = ({ name, label, error }: { name: any, label: string , error: any }) => {
+  const ControlledText = ({ name, label, error }: { name: any, label: string, error: any }) => {
     return (
       <Controller
         control={formMethods.control}
@@ -218,10 +218,10 @@ const  PrecoveryForm = () => {
       />
     )
   }
-  
+
 
   const onSubmit = async (data: any) => {
-    
+
     // This sets up an interval timer to handle the progress bar. it is cleared on return
     setProgress(0)
     setPrecoveryResults([])
@@ -236,12 +236,11 @@ const  PrecoveryForm = () => {
       });
     }, 500);
 
-
     let req = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius } = formMethods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1/3600) }
+        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1 / 3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
           req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
@@ -318,23 +317,23 @@ const  PrecoveryForm = () => {
     <FormProvider {...formMethods} >
       <form onSubmit={formMethods.handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
-          {parsed.single !== "true" &&
-           <Grid item xs={4}>
-            <Controller
-              control={formMethods.control}
-              name="inputType"
-              render={({ field: { onChange, value, ref } }) => (
-                <RadioGroup
-                  row
-                  value={value}
-                  onChange={onChange} // send value to hook form
-                >
-                  <FormControlLabel value="single" control={<Radio />} label="Single Orbit" />
-                  <FormControlLabel value="des" control={<Radio />} label=".Des File" />
-                </RadioGroup>
-              )}
-            />
-          </Grid>}
+          {parsed.debug === "true" &&
+            <Grid item xs={4}>
+              <Controller
+                control={formMethods.control}
+                name="inputType"
+                render={({ field: { onChange, value, ref } }) => (
+                  <RadioGroup
+                    row
+                    value={value}
+                    onChange={onChange} // send value to hook form
+                  >
+                    <FormControlLabel value="single" control={<Radio />} label="Single Orbit" />
+                    <FormControlLabel value="des" control={<Radio />} label=".Des File" />
+                  </RadioGroup>
+                )}
+              />
+            </Grid>}
 
           <Grid item xs={9}>
             <SampleObjectPicker
@@ -347,51 +346,55 @@ const  PrecoveryForm = () => {
         <br></br>
 
         <br></br>
-        <Grid container spacing={2}>
-          <Grid item xs={4}>
-            <Controller
-              control={formMethods.control}
-              name={"start_mjd"}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <TextField
-                  error={errors.start_mjd ? true : false}
-                  helperText={errors.start_mjd ? errors.start_mjd.message : ''}
-                  fullWidth
-                  label={"Start MJD"}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={() => { 
-                    onBlur() 
-                    // formMethods.setValue("end_mjd", (parseFloat(formMethods.getValues("start_mjd")) + 90).toString()) 
-                  }}
+        {parsed.debug === "true" &&
+          <>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <Controller
+                  control={formMethods.control}
+                  name={"start_mjd"}
+                  render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <TextField
+                      error={errors.start_mjd ? true : false}
+                      helperText={errors.start_mjd ? errors.start_mjd.message : ''}
+                      fullWidth
+                      label={"Start MJD"}
+                      value={value}
+                      onChange={onChange}
+                      onBlur={() => {
+                        onBlur()
+                        // formMethods.setValue("end_mjd", (parseFloat(formMethods.getValues("start_mjd")) + 90).toString()) 
+                      }}
+                    />
+                  )}
                 />
-              )}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <Controller
-              control={formMethods.control}
-              name={"end_mjd"}
-              render={({ field: { onChange, value, ref } }) => (
-                <TextField
-                  fullWidth
-                  error={errors.end_mjd ? true : false}
-                  helperText={errors.end_mjd ? errors.end_mjd.message : ''}
-                  label={"End MJD"}
-                  value={value}
-                  // disabled
-                  onChange={onChange}
+              </Grid>
+              <Grid item xs={4}>
+                <Controller
+                  control={formMethods.control}
+                  name={"end_mjd"}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <TextField
+                      fullWidth
+                      error={errors.end_mjd ? true : false}
+                      helperText={errors.end_mjd ? errors.end_mjd.message : ''}
+                      label={"End MJD"}
+                      value={value}
+                      // disabled
+                      onChange={onChange}
+                    />
+                  )}
                 />
-              )}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <ControlledText name={"radius"} label={'Radius (Arcsec)'} error={errors.radius} />
-          </Grid>
-        </Grid>
+              </Grid>
+              <Grid item xs={4}>
+                <ControlledText name={"radius"} label={'Radius (Arcsec)'} error={errors.radius} />
+              </Grid>
+            </Grid>
 
-        <Divider sx={{marginTop:3, marginBottom:2}} />
 
+            <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
+          </>
+        }
         {
           formMethods.getValues("inputType") === "single" ?
             <PrecoveryFormSingle
@@ -402,19 +405,21 @@ const  PrecoveryForm = () => {
 
 
         {!formMethods.formState.isSubmitting ?
-          <Button sx={{marginTop:3}} color="primary" variant="contained" fullWidth type="submit" disabled={submitDisabled()} >
+          <Button sx={{ marginTop: 3 }} color="primary" variant="contained" fullWidth type="submit" disabled={submitDisabled()} >
             Submit
           </Button> :
-          <LoadingButton sx={{marginTop:3}} color="primary" loading fullWidth variant="outlined">
+          <LoadingButton sx={{ marginTop: 3 }} color="primary" loading fullWidth variant="outlined">
             Submit
           </LoadingButton>
         }
 
         {formMethods.formState.isSubmitting &&
-        <LinearProgress
+          <LinearProgress
             variant="determinate"
-            sx={{height: 10,
-              borderRadius: 5, marginTop:3}}
+            sx={{
+              height: 10,
+              borderRadius: 5, marginTop: 3
+            }}
             value={progress} />
         }
 
@@ -428,11 +433,11 @@ const  PrecoveryForm = () => {
           </Alert>
         }
 
-        {precoveryResults.length > 0 && formMethods.formState.isSubmitted?
+        {precoveryResults.length > 0 && formMethods.formState.isSubmitted ?
           <>
             <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
               <Button sx={{ marginTop: 3 }} color="secondary" variant="contained" fullWidth >
-                <div className={"text-undecorated"}>Download</div>
+                <div className={"text-undecorated"}>Download CSV</div>
               </Button>
             </CSVLink>
 

@@ -13,10 +13,113 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import TablePagination from '@mui/material/TablePagination';
+import Tooltip from '@mui/material/Tooltip';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 import { csv } from "d3-fetch"
+import { string } from 'yup';
 
 
+
+
+interface Column {
+  id: 'catalog_id' | 'mjd' | 'ddec' | 'dec' | 'dec_sigma' | 'dra' | 'ra' | 'ra_sigma' | 'distance' | 'filter' | 'id' | 'mag' | 'mag_sigma' | 'obscode';
+  label: string;
+  minWidth?: number;
+  tooltip?: string;
+  align?: 'right';
+  format?: (value: number) => string;
+}
+
+
+const columns: readonly Column[] = [
+  { id: 'mjd', label: 'MJD', minWidth: 120, format: (value: number) => value.toFixed(5), },
+  {
+    id: 'ra',
+    label: 'RA',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'dec',
+    label: 'DEC',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'mag',
+    label: 'Magnitude',
+    tooltip: "Note on Magnitudes here",
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toFixed(3),
+  },
+  {
+    id: 'mag_sigma',
+    label: 'Magnitude \u03C3',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toExponential(5),
+  },
+  {
+    id: 'dra',
+    label: 'dRA (\")',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => (value / 0.000277778).toExponential(5),
+  },
+  {
+    id: 'ra_sigma',
+    label: 'RA \u03C3',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toExponential(5),
+  },
+  {
+    id: 'ddec',
+    label: 'dDEC (\")',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => (value / 0.000277778).toExponential(5),
+  },
+  {
+    id: 'dec_sigma',
+    label: 'DEC \u03C3',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toExponential(5),
+  },
+  {
+    id: 'distance',
+    label: 'Distance',
+    minWidth: 120,
+    align: 'right',
+    format: (value: number) => value.toExponential(5),
+  },
+  {
+    id: 'obscode',
+    label: 'Observatory Code',
+    minWidth: 170,
+    align: 'right',
+    // format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'id',
+    label: 'Observation ID',
+    minWidth: 170,
+    align: 'right',
+    // format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'catalog_id',
+    label: 'Catalog ID',
+    minWidth: 170,
+    align: 'right',
+    // format: (value: number) => value.toFixed(5),
+  },
+];
 
 const ResultsTable = (props: any) => {
 
@@ -26,65 +129,80 @@ const ResultsTable = (props: any) => {
   const { errors } = formState
 
 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
   return (
-
-    <Controller
-      control={control}
-      name="sampleObjectPicker"
-      render={({ field: { onChange, value, ref } }) => (
-
-        <TableContainer sx={{ marginTop: 3, maxHeight: 450 }} component={Paper}>
-          <Table stickyHeader sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell>catalog_id</TableCell>
-                <TableCell align="right">mjd</TableCell>
-                <TableCell align="right">ddec</TableCell>
-                <TableCell align="right">dec</TableCell>
-                <TableCell align="right">dec_sigma</TableCell>
-                <TableCell align="right">dra</TableCell>
-                <TableCell align="right">ra</TableCell>
-                <TableCell align="right">ra_sigma</TableCell>
-                <TableCell align="right">distance</TableCell>
-                <TableCell align="right">filter</TableCell>
-                <TableCell align="right">id</TableCell>
-                <TableCell align="right">mag</TableCell>
-                <TableCell align="right">mag_sigma</TableCell>
-                <TableCell align="right">obscode</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-
-              {precoveryResults.map((row: any) => (
-                <TableRow
-                  key={row.catalog_id}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+    <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: 3, }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader size="small" aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                column.tooltip ? 
+                <Tooltip title={column.tooltip}><TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth, fontWeight:600 }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.catalog_id}
-                  </TableCell>
-                  <TableCell align="right">{row.mjd}</TableCell>
-                  <TableCell align="right">{row.ddec}</TableCell>
-                  <TableCell align="right">{row.dec}</TableCell>
-                  <TableCell align="right">{row.dec_sigma}</TableCell>
-                  <TableCell align="right">{row.dra}</TableCell>
-                  <TableCell align="right">{row.ra}</TableCell>
-                  <TableCell align="right">{row.ra_sigma}</TableCell>
-                  <TableCell align="right">{row.distance}</TableCell>
-                  <TableCell align="right">{row.filter}</TableCell>
-                  <TableCell align="right">{row.id}</TableCell>
-                  <TableCell align="right">{row.mag}</TableCell>
-                  <TableCell align="right">{row.mag_sigma}</TableCell>
-                  <TableCell align="right">{row.obscode}</TableCell>
-                </TableRow>
+                 <>{column.label}</>
+                </TableCell></Tooltip>
+                :
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth, fontWeight:600 }}
+                >
+                 {column.label}
+                </TableCell>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    />
-  )
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {precoveryResults
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row: any) => {
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                    {columns.map((column) => {
+                      const value = row[column.id];
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                          {column.format && typeof value === 'number'
+                            ? column.format(value)
+                            : value}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        sx={{
+          "& .MuiTablePagination-selectLabel": { "margin-bottom": 0 },
+          "& .MuiTablePagination-displayedRows": { "margin-bottom": 0 },
+        }}
+        component="div"
+        count={precoveryResults.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
+  );
 }
 
 export default ResultsTable

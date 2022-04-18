@@ -75,7 +75,7 @@ function Header() {
           <Link className="nav-link" to="/">Home</Link>
         </ListItem>
         <ListItem >
-          <Link className="nav-link" to={`/precovery?user=${user}&single=true`}>Precovery</Link>
+          <Link className="nav-link" to={`/precovery?user=${user}&debug=false`}>Precovery</Link>
         </ListItem>
       </List>
       <Divider />
@@ -138,7 +138,7 @@ function Header() {
             {/* <li><a className="nav-link scrollto" href="#research">Algorithms</a></li> */}
             {/* <li><a className="nav-link scrollto" href="#team">Team</a></li> */}
             <li>
-              <Link className="nav-link" to={`/precovery?user=${user}&single=true`}>Precovery</Link>
+              <Link className="nav-link" to={`/precovery?user=${user}&debug=false`}>Precovery</Link>
             </li>
             <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
           </ul>
