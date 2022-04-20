@@ -379,7 +379,7 @@ const PrecoveryForm = () => {
         allTouched = intersection(["a", "eKep", "iKep", "anKep", "apKep", "ma", 'mjd_tdbKep'], touchedFields).length === 7
       }
     }
-    console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys], coreErrors.length, specificErrors.length, allTouched)
+    // console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys], coreErrors.length, specificErrors.length, allTouched)
     return (coreErrors.length + specificErrors.length) > 0 || !allTouched
   }
 
