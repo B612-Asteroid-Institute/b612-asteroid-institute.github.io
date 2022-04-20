@@ -32,7 +32,7 @@ function Precovery() {
         <div className="container">
           <div className="row content">
             <div className="col-lg-12">
-              <h2>What is Precovery?</h2>
+              <h2>ADAM Precovery Service</h2>
               <p>The Asteroid Precovery Service extends the observational arc of candidate asteroids by searching the NOIRLab catalog for moving objects consistent with an input state vector.  Asteroid Precovery returns the list of observations (time, RA, DEC) of candidate precovery objects. For more information on the technique used, see <a href={'https://github.com/B612-Asteroid-Institute/precovery'} target={"_blank"} >the repository</a>.
                 <br></br>
                 <br></br>

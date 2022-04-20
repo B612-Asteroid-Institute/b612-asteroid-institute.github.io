@@ -15,15 +15,37 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import Tooltip from '@mui/material/Tooltip';
+import HelpIcon from '@mui/icons-material/Help';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
 import { csv } from "d3-fetch"
 import { string } from 'yup';
 
 
 
-
 interface Column {
-  id: 'catalog_id' | 'mjd' | 'ddec' | 'dec' | 'dec_sigma' | 'dra' | 'ra' | 'ra_sigma' | 'distance' | 'filter' | 'id' | 'mag' | 'mag_sigma' | 'obscode';
+  id: 'orbit_id?'|
+  'catalog_id'|
+  'ra_deg'|
+  'delta_ra_arcsec'|
+  'dec_deg'|
+  'delta_dec_arcsec'|
+  'ra_sigma_arcsec'|
+  'dec_sigma_arcsec'|
+  'mag'|
+  'mag_sigma'|
+  'distance_arcsec'|
+  'filter'|
+  'healpix_id'|
+  'mjd_utc'|
+  'obscode'|
+  'exposure_id'|
+  'observation_id'|
+  'pred_dec_deg'|
+  'pred_ra_deg'|
+  'pred_vdec_degpday'|
+  'pred_vra_degpday';
   label: string;
   minWidth?: number;
   tooltip?: string;
@@ -33,80 +55,122 @@ interface Column {
 
 
 const columns: readonly Column[] = [
-  { id: 'mjd', label: 'MJD', minWidth: 120, format: (value: number) => value.toFixed(5), },
+  { id: 'mjd_utc', label: 'MJD (UTC)', minWidth: 120, format: (value: number) => value.toFixed(5), },
   {
-    id: 'ra',
-    label: 'RA',
+    id: 'ra_deg',
+    label: 'RA (\u00B0)',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'dec',
-    label: 'DEC',
+    id: 'dec_deg',
+    label: 'DEC (\u00B0)',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'filter',
+    label: 'Filter',
+    minWidth: 120,
+    tooltip: "Filter used during the exposure.",
+    align: 'right',
   },
   {
     id: 'mag',
     label: 'Magnitude',
-    tooltip: "Note on Magnitudes here",
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(3),
   },
   {
     id: 'mag_sigma',
-    label: 'Magnitude \u03C3',
-    minWidth: 120,
+    label: 'Magnitude Error',
+    minWidth: 150,
     align: 'right',
-    format: (value: number) => value.toExponential(5),
+    format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'dra',
+    id: 'delta_ra_arcsec',
     label: 'dRA (\")',
     minWidth: 120,
+    tooltip: "Discrepancy in RA between predicted and observed position.",
     align: 'right',
-    format: (value: number) => (value / 0.000277778).toExponential(5),
+    format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'ra_sigma',
-    label: 'RA \u03C3',
+    id: 'ra_sigma_arcsec',
+    label: 'RA Error (\")',
     minWidth: 120,
     align: 'right',
-    format: (value: number) => value.toExponential(5),
+    format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'ddec',
+    id: 'delta_dec_arcsec',
     label: 'dDEC (\")',
     minWidth: 120,
+    tooltip: "Discrepancy in DEC between predicted and observed position.",
     align: 'right',
-    format: (value: number) => (value / 0.000277778).toExponential(5),
+    format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'dec_sigma',
-    label: 'DEC \u03C3',
-    minWidth: 120,
+    id: 'dec_sigma_arcsec',
+    label: 'DEC Error (\")',
+    minWidth: 130,
     align: 'right',
-    format: (value: number) => value.toExponential(5),
+    format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'distance',
-    label: 'Distance',
+    id: 'pred_ra_deg',
+    label: 'Pred. RA (\u00B0)',
     minWidth: 120,
+    tooltip: "Predicted Right Ascension from supplied orbit at observed time.",
     align: 'right',
-    format: (value: number) => value.toExponential(5),
+    format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'pred_dec_deg',
+    label: 'Pred. DEC (\u00B0)',
+    minWidth: 130,
+    tooltip: "Predicted Declination from supplied orbit at observed time.",
+    align: 'right',
+    format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'pred_vra_degpday',
+    label: 'Pred. V RA  (\u00B0/day)',
+    minWidth: 120,
+    tooltip: "Predicted velocity in RA from supplied orbit at observed time.",
+    align: 'right',
+    format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'pred_vdec_degpday',
+    label: 'Pred. V DEC (\u00B0/day)',
+    minWidth: 120,
+    tooltip: "Predicted velocity in DEC from supplied orbit at observed time.",
+    align: 'right',
+    format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'distance_arcsec',
+    label: 'Distance (\")',
+    minWidth: 120,
+    tooltip: "Distance (discrepancy) in arcsec between predicted position and candidate precovered object.",
+    align: 'right',
+    format: (value: number) => value.toFixed(5),
   },
   {
     id: 'obscode',
     label: 'Observatory Code',
     minWidth: 170,
+    tooltip: "Minor Planetary Center obsevatory code.",
     align: 'right',
     // format: (value: number) => value.toFixed(5),
   },
   {
-    id: 'id',
+    id: 'observation_id',
     label: 'Observation ID',
     minWidth: 170,
     align: 'right',
@@ -115,6 +179,13 @@ const columns: readonly Column[] = [
   {
     id: 'catalog_id',
     label: 'Catalog ID',
+    minWidth: 170,
+    align: 'right',
+    // format: (value: number) => value.toFixed(5),
+  },
+  {
+    id: 'healpix_id',
+    label: 'Healpixel ID',
     minWidth: 170,
     align: 'right',
     // format: (value: number) => value.toFixed(5),
@@ -141,33 +212,42 @@ const ResultsTable = (props: any) => {
     setPage(0);
   };
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: 3, }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader size="small" aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                column.tooltip ? 
-                <Tooltip title={column.tooltip}><TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth, fontWeight:600 }}
-                >
-                 <>{column.label}</>
-                </TableCell></Tooltip>
-                :
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth, fontWeight:600 }}
-                >
+    <>
+
+      <Typography fontSize={14} sx={{ overflow: 'hidden', marginTop: 3, marginLeft: 2, justifyContent: 'center', }}>
+        Mouse over column headers to view additional information
+      </Typography>
+      <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: 1.5, }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader size="small" aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  column.tooltip ?
+                    <Tooltip  title={<Typography sx={{ maxWidth: 250 }} fontSize={15}>{column.tooltip}</Typography>}>
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        style={{ minWidth: column.minWidth, fontWeight: 600 }}
+                      >
+                        {column.label}
+
+                      </TableCell>
+
+                    </Tooltip>
+                    :
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth, fontWeight: 600 }}
+                    >
                  {column.label}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {precoveryResults
+            {precoveryResults.sort((a:any, b: any) => Number(a.mjd) - Number(b.mjd))
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row: any) => {
                 return (
@@ -202,6 +282,8 @@ const ResultsTable = (props: any) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
+
+    </>
   );
 }
 

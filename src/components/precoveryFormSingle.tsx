@@ -14,7 +14,7 @@ const PrecoveryFormSingle = (props: any) => {
 
   const { ControlledText } = props
 
-  const { register, control, getValues, formState } = useFormContext();
+  const { register, control, getValues, formState, trigger } = useFormContext();
   const { errors } =  formState
 
   return (
@@ -34,7 +34,10 @@ const PrecoveryFormSingle = (props: any) => {
               row
               aria-labelledby="demo-radio-buttons-group-label"
               value={value}
-              onChange={onChange}
+              onChange={(e)=> {
+                onChange(e)
+                if (formState.isSubmitted) trigger() 
+              }}
             >
               <FormControlLabel value="keplerian" control={<Radio />} label="Keplerian" />
               <FormControlLabel value="cartesian" control={<Radio />} label="Cartesian" />

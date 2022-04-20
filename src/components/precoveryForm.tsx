@@ -42,20 +42,27 @@ const queryString = require('query-string');
 interface Observation {
   orbit_id?: string
   catalog_id: string
-  ra: number
-  dra: number
-  dec: number
-  ddec: number
-  ra_sigma: number
-  dec_sigma: number
+  ra_deg: number
+  delta_ra_arcsec: number
+  dec_deg: number
+  delta_dec_arcsec: number
+  ra_sigma_arcsec: number
+  dec_sigma_arcsec: number
   mag: number
   mag_sigma: number
-  distance: number
+  distance_arcsec: number
   filter: string
-  id: string
-  mjd: number
+  healpix_id: string
+  mjd_utc: number
   obscode: string
+  exposure_id: string
+  observation_id: string
+  pred_dec_deg: number
+  pred_ra_deg: number
+  pred_vdec_degpday: number
+  pred_vra_degpday: number
 }
+
 
 // interface SampleObject {
 //   M: string
@@ -84,48 +91,112 @@ interface DisplayError {
 
 const validationSchema = Yup.object().shape({
   "desInput": Yup.string(),
-  "x": Yup.number()
-    .typeError("Must be a number"),
-  "y": Yup.number()
-    .typeError("Must be a number"),
-  "z": Yup.number()
-    .typeError("Must be a number"),
-  "vx": Yup.number()
-    .typeError("Must be a number"),
-  "vy": Yup.number()
-    .typeError("Must be a number"),
-  "vz": Yup.number()
-    .typeError("Must be a number"),
-  'mjd_tdb': Yup.number()
-    .typeError("Must be a number"),
-  "q": Yup.number()
-    .typeError("Must be a number"),
-  "e": Yup.number()
-    .typeError("Must be a number"),
-  "i": Yup.number()
-    .typeError("Must be a number"),
-  "an": Yup.number()
-    .typeError("Must be a number"),
-  "ap": Yup.number()
-    .typeError("Must be a number"),
-  "tp": Yup.number()
-    .typeError("Must be a number"),
-  "mjd_tdbCom": Yup.number()
-    .typeError("Must be a number"),
-  "a": Yup.number()
-    .typeError("Must be a number"),
-  "eKep": Yup.number()
-    .typeError("Must be a number"),
-  "iKep": Yup.number()
-    .typeError("Must be a number"),
-  "anKep": Yup.number()
-    .typeError("Must be a number"),
-  "apKep": Yup.number()
-    .typeError("Must be a number"),
-  "ma": Yup.number()
-    .typeError("Must be a number"),
-  "mjd_tdbKep": Yup.number()
-    .typeError("Must be a number"),
+  "coordinateSystem": Yup.string().oneOf(['cartesian', 'keplerian', 'cometary']),
+  "x": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "y": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "z": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "vx": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "vy": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "vz": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  'mjd_tdb': Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cartesian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "q": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "e": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "i": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "an": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "ap": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "tp": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "mjd_tdbCom": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'cometary',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "a": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "eKep": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "iKep": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "anKep": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "apKep": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "ma": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
+  "mjd_tdbKep": Yup.mixed().notRequired()
+    .when('coordinateSystem', {
+      "is": 'keplerian',
+      "then": Yup.number().typeError("Must be a number")
+    }),
   "start_mjd": Yup.number()
     .typeError("Must be a number")
     .min(56193, 'Dataset used starts at MJD 56193')
@@ -139,7 +210,7 @@ const validationSchema = Yup.object().shape({
   "radius": Yup.number()
     .typeError("Must be a number")
     .min(0.0, 'Must pick a positive value')
-    .max(10.0, 'Values over 10" will result in numerous false positives'),
+    // .max(10.0, 'Values over 10" will result in numerous false positives'),
 });
 
 
@@ -161,28 +232,27 @@ const PrecoveryForm = () => {
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
-    "x": "2.29984500e+00",
-    "y": "-1.22649119e+00",
-    "z": "3.82684685e-01",
-    "vx": "5.12953566e-03",
-    "vy": "1.01225247e-02",
-    "vz": "-4.12588907e-04",
-    'mjd_tdb': "5.65340001e+04",
-    "q": "1",
-    "e": "1",
-    "i": "1",
-    "an": "1",
-    "ap": "1",
-    "tp": "1",
-    "mjd_tdbCom": "5.65340001e+04",
-    "a": "3.19410998e+00",
-    "eKep": "1.94124171e-01",
-    "iKep": "2.76026153e+01",
-    "anKep": "3.14253651e+02",
-    "apKep": "2.29583820e+02",
-    "ma": "1.35804981e+02",
-    "mjd_tdbKep": "5.65340001e+04",
-    // "start_mjd": "57947",
+    "x": "",
+    "y": "",
+    "z": "",
+    "vx": "",
+    "vy": "",
+    "vz": "",
+    'mjd_tdb': "",
+    "q": "",
+    "e": "",
+    "i": "",
+    "an": "",
+    "ap": "",
+    "tp": "",
+    "mjd_tdbCom": "",
+    "a": "",
+    "eKep": "",
+    "iKep": "",
+    "anKep": "",
+    "apKep": "",
+    "ma": "",
+    "mjd_tdbKep": "",
     "start_mjd": "56193",
     "end_mjd": "58804",
     "radius": "1",
@@ -286,25 +356,31 @@ const PrecoveryForm = () => {
 
   }
 
-  // WIP for handling whether the submit button should be disabled. Doesn't work for now.
-
+  // This is custom validation to control whether the submit button should be disabled. Essentially we only want them to be able to submit
+  // if the current input type's relevant fields are validated.
   const submitDisabled = () => {
-    const errorKeys = Object.keys(errors)
-    const coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
+    // if (!formMethods.formState.isDirty) return true
+    let errorKeys = Object.keys(errors)
+    let touchedFields = Object.keys(formMethods.formState.touchedFields)
+    let coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
     let specificErrors = []
+    let allTouched = false
     if (formMethods.getValues("inputType") === "single") {
       if (formMethods.getValues("coordinateSystem") === "cartesian") {
         specificErrors = intersection(["x", "y", "z", "vx", "vy", "vz", 'mjd_tdb'], errorKeys)
+        allTouched = intersection(["x", "y", "z", "vx", "vy", "vz", 'mjd_tdb'], touchedFields).length === 7
       }
       else if (formMethods.getValues("coordinateSystem") === "cometary") {
         specificErrors = intersection(["q", "e", "i", "an", "ap", "tp", 'mjd_tdbCom'], errorKeys)
+        allTouched = intersection(["q", "e", "i", "an", "ap", "tp", 'mjd_tdbCom'], touchedFields).length === 7
       }
-      else if (formMethods.getValues("coordinateSystem") === "cometary") {
+      else if (formMethods.getValues("coordinateSystem") === "keplerian") {
         specificErrors = intersection(["a", "eKep", "iKep", "anKep", "apKep", "ma", 'mjd_tdbKep'], errorKeys)
+        allTouched = intersection(["a", "eKep", "iKep", "anKep", "apKep", "ma", 'mjd_tdbKep'], touchedFields).length === 7
       }
     }
-    // console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys])
-    return coreErrors.length + specificErrors.length > 0
+    console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys], coreErrors.length, specificErrors.length, allTouched)
+    return (coreErrors.length + specificErrors.length) > 0 || !allTouched
   }
 
 
