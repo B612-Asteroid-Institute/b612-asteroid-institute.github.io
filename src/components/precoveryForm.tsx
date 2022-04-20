@@ -41,7 +41,6 @@ const queryString = require('query-string');
 
 interface Observation {
   orbit_id?: string
-  catalog_id: string
   ra_deg: number
   delta_ra_arcsec: number
   dec_deg: number
@@ -482,7 +481,7 @@ const PrecoveryForm = () => {
 
         {!formMethods.formState.isSubmitting ?
           <Button sx={{ marginTop: 3 }} color="primary" variant="contained" fullWidth type="submit" disabled={submitDisabled()} >
-            Submit
+            {formMethods.formState.isSubmitted ? "Resubmit" : "Submit"}
           </Button> :
           <LoadingButton sx={{ marginTop: 3 }} color="primary" loading fullWidth variant="outlined">
             Submit

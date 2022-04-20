@@ -26,7 +26,6 @@ import { string } from 'yup';
 
 interface Column {
   id: 'orbit_id?'|
-  'catalog_id'|
   'ra_deg'|
   'delta_ra_arcsec'|
   'dec_deg'|
@@ -172,13 +171,6 @@ const columns: readonly Column[] = [
   {
     id: 'observation_id',
     label: 'Observation ID',
-    minWidth: 170,
-    align: 'right',
-    // format: (value: number) => value.toFixed(5),
-  },
-  {
-    id: 'catalog_id',
-    label: 'Catalog ID',
     minWidth: 170,
     align: 'right',
     // format: (value: number) => value.toFixed(5),
