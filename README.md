@@ -1,3 +1,10 @@
+## Installation
+
+Check package.json for the expected node version - currently this is ^16.11.26
+
+In the project root run this command in a terminal:
+npm install
+
 ## Available Scripts
 
 Guides are with npm - you can use yarn as well with the form "yarn run {command}"
