@@ -12,7 +12,10 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Button from '@mui/material/Button';
+import { CSVLink } from 'react-csv'
 import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
 import TablePagination from '@mui/material/TablePagination';
 import Tooltip from '@mui/material/Tooltip';
 import HelpIcon from '@mui/icons-material/Help';
@@ -25,25 +28,25 @@ import { string } from 'yup';
 
 
 interface Column {
-  id: 'orbit_id?'|
-  'ra_deg'|
-  'delta_ra_arcsec'|
-  'dec_deg'|
-  'delta_dec_arcsec'|
-  'ra_sigma_arcsec'|
-  'dec_sigma_arcsec'|
-  'mag'|
-  'mag_sigma'|
-  'distance_arcsec'|
-  'filter'|
-  'healpix_id'|
-  'mjd_utc'|
-  'obscode'|
-  'exposure_id'|
-  'observation_id'|
-  'pred_dec_deg'|
-  'pred_ra_deg'|
-  'pred_vdec_degpday'|
+  id: 'orbit_id?' |
+  'ra_deg' |
+  'delta_ra_arcsec' |
+  'dec_deg' |
+  'delta_dec_arcsec' |
+  'ra_sigma_arcsec' |
+  'dec_sigma_arcsec' |
+  'mag' |
+  'mag_sigma' |
+  'distance_arcsec' |
+  'filter' |
+  'healpix_id' |
+  'mjd_utc' |
+  'obscode' |
+  'exposure_id' |
+  'observation_id' |
+  'pred_dec_deg' |
+  'pred_ra_deg' |
+  'pred_vdec_degpday' |
   'pred_vra_degpday';
   label: string;
   minWidth?: number;
@@ -58,6 +61,7 @@ const columns: readonly Column[] = [
   {
     id: 'ra_deg',
     label: 'RA (\u00B0)',
+    tooltip: 'RA (\u00B0)',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(5),
@@ -65,6 +69,7 @@ const columns: readonly Column[] = [
   {
     id: 'dec_deg',
     label: 'DEC (\u00B0)',
+    tooltip: 'DEC (\u00B0)',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(5),
@@ -79,6 +84,7 @@ const columns: readonly Column[] = [
   {
     id: 'mag',
     label: 'Magnitude',
+    tooltip: 'Magnitude',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(3),
@@ -86,6 +92,7 @@ const columns: readonly Column[] = [
   {
     id: 'mag_sigma',
     label: 'Magnitude Error',
+    tooltip: 'Magnitude Error',
     minWidth: 150,
     align: 'right',
     format: (value: number) => value.toFixed(5),
@@ -101,6 +108,7 @@ const columns: readonly Column[] = [
   {
     id: 'ra_sigma_arcsec',
     label: 'RA Error (\")',
+    tooltip: 'RA Error (\")',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(5),
@@ -116,6 +124,7 @@ const columns: readonly Column[] = [
   {
     id: 'dec_sigma_arcsec',
     label: 'DEC Error (\")',
+    tooltip: 'DEC Error (\")',
     minWidth: 130,
     align: 'right',
     format: (value: number) => value.toFixed(5),
@@ -171,6 +180,7 @@ const columns: readonly Column[] = [
   {
     id: 'observation_id',
     label: 'Observation ID',
+    tooltip: 'Observation ID',
     minWidth: 170,
     align: 'right',
     // format: (value: number) => value.toFixed(5),
@@ -178,6 +188,7 @@ const columns: readonly Column[] = [
   {
     id: 'healpix_id',
     label: 'Healpixel ID',
+    tooltip: 'Healpixel ID',
     minWidth: 170,
     align: 'right',
     // format: (value: number) => value.toFixed(5),
@@ -205,10 +216,25 @@ const ResultsTable = (props: any) => {
   };
   return (
     <>
+      <Grid container
+        spacing={2}
+        justifyContent="center"
+        alignItems="center">
 
-      <Typography fontSize={14} sx={{ overflow: 'hidden', marginTop: 3, marginLeft: 2, justifyContent: 'center', }}>
-        Mouse over column headers to view additional information
-      </Typography>
+        <Grid item xs={6}>
+          <Typography fontSize={14} sx={{ overflow: 'hidden', marginTop: 3, marginLeft: 2, justifyContent: 'center', }}>
+            Mouse over column headers to view additional information
+          </Typography>
+        </Grid>
+        <Grid item xs={6}>
+          <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
+            <Button sx={{ marginTop: 3 }} color="secondary" variant="contained" fullWidth >
+              <div className={"text-undecorated"}>Download CSV</div>
+            </Button>
+          </CSVLink>
+        </Grid>
+      </Grid>
+
       <Paper sx={{ width: '100%', overflow: 'hidden', marginTop: 1.5, }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader size="small" aria-label="sticky table">
@@ -216,7 +242,7 @@ const ResultsTable = (props: any) => {
               <TableRow>
                 {columns.map((column) => (
                   column.tooltip ?
-                    <Tooltip  title={<Typography sx={{ maxWidth: 250 }} fontSize={15}>{column.tooltip}</Typography>}>
+                    <Tooltip title={<Typography sx={{ maxWidth: 250 }} fontSize={15}>{column.tooltip}</Typography>}>
                       <TableCell
                         key={column.id}
                         align={column.align}
@@ -233,47 +259,47 @@ const ResultsTable = (props: any) => {
                       align={column.align}
                       style={{ minWidth: column.minWidth, fontWeight: 600 }}
                     >
-                 {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {precoveryResults.sort((a:any, b: any) => Number(a.mjd) - Number(b.mjd))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row: any) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        sx={{
-          "& .MuiTablePagination-selectLabel": { "margin-bottom": 0 },
-          "& .MuiTablePagination-displayedRows": { "margin-bottom": 0 },
-        }}
-        component="div"
-        count={precoveryResults.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-    </Paper>
+                      {column.label}
+                    </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {precoveryResults.sort((a: any, b: any) => Number(a.mjd) - Number(b.mjd))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row: any) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format && typeof value === 'number'
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          sx={{
+            "& .MuiTablePagination-selectLabel": { "margin-bottom": 0 },
+            "& .MuiTablePagination-displayedRows": { "margin-bottom": 0 },
+          }}
+          component="div"
+          count={precoveryResults.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
 
     </>
   );

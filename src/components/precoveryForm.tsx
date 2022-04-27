@@ -305,6 +305,35 @@ const PrecoveryForm = () => {
       });
     }, 500);
 
+
+  //TODO - add this as the submit behavior for localhost
+  //   const dat = {
+  //     'orbit_id': "100.00",
+  //   'ra_deg': 100.00,
+  //   'delta_ra_arcsec': 100.00,
+  //   'dec_deg': 100.00,
+  //   'delta_dec_arcsec': 100.00,
+  //   'ra_sigma_arcsec': 100.00,
+  //   'dec_sigma_arcsec': 100.00,
+  //   'mag': 100.00,
+  //   'mag_sigma': 100.00,
+  //   'distance_arcsec': 100.00,
+  //   'filter': "100.00",
+  //   'healpix_id': "100.00",
+  //   'mjd_utc': 100.00,
+  //   'obscode': "100.00",
+  //   'exposure_id': "100.00",
+  //   'observation_id': "100.00",
+  //   'pred_dec_deg':100.00,
+  //   'pred_ra_deg': 100.00,
+  //   'pred_vdec_degpday': 100.00,
+  //   'pred_vra_degpday': 100.00,
+  // }
+  // setPrecoveryResults([dat, dat,dat, dat,dat])
+  // return
+
+
+
     let req = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
@@ -410,12 +439,7 @@ const PrecoveryForm = () => {
               />
             </Grid>}
 
-          <Grid item xs={9}>
-            <SampleObjectPicker
-              sampleObjects={sampleObjects}
-              setSampleObjects={setSampleObjects}
-            />
-          </Grid>
+          
         </Grid>
 
         <br></br>
@@ -474,6 +498,8 @@ const PrecoveryForm = () => {
           formMethods.getValues("inputType") === "single" ?
             <PrecoveryFormSingle
               ControlledText={ControlledText}
+              sampleObjects={sampleObjects}
+              setSampleObjects={setSampleObjects}
             /> :
             <PrecoveryFormDes />
         }
@@ -510,12 +536,6 @@ const PrecoveryForm = () => {
 
         {precoveryResults.length > 0 && formMethods.formState.isSubmitted ?
           <>
-            <CSVLink className={"csvLink"} data={precoveryResults} filename={"precoveryResults.csv"} enclosingCharacter={``}>
-              <Button sx={{ marginTop: 3 }} color="secondary" variant="contained" fullWidth >
-                <div className={"text-undecorated"}>Download CSV</div>
-              </Button>
-            </CSVLink>
-
             <ResultsTable
               precoveryResults={precoveryResults}
             />
