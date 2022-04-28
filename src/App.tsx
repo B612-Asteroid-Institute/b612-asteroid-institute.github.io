@@ -441,7 +441,8 @@ function App() {
           <a href="#" className="google-plus"><i className="bx bxl-skype"></i></a>
           <a href="#" className="linkedin"><i className="bx bxl-linkedin"></i></a>
         </div>
-
+        <br></br>
+        <div >The Asteroid Decision Analysis and Mapping (ADAM) platform is a project of the B612 Foundation's  Asteroid Institute.</div>
     </div>
 
   </footer >

@@ -45,8 +45,8 @@ function Header() {
   const [scroll, setScroll] = useState(0)
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
-  const heroClientHeight = document.getElementsByClassName('hero')[0].clientHeight
-  const headerClientHeight = document.getElementById('header').clientHeight
+  const heroClientHeight = document.getElementsByClassName('hero')[0]?.clientHeight
+  const headerClientHeight = document.getElementById('header')?.clientHeight
 
   useEffect(() => {
     document.addEventListener("scroll", () => {
@@ -129,7 +129,7 @@ function Header() {
         <div className="logo">
           <h1>
             <Link to="/">
-              <img src={require("../img/asteroid-institute.png")} alt="B612 ADAM" class="img-fluid" /></Link></h1>
+              <img src={require("../img/asteroid-institute.png")} alt="B612 ADAM" className="img-fluid" /></Link></h1>
         </div>
 
         <nav id="navbar" className="navbar">
@@ -139,10 +139,10 @@ function Header() {
             {/* <li><a className="nav-link scrollto" href="#services">The Platform</a></li> */}
             {/* <li><a className="nav-link scrollto" href="#research">Algorithms</a></li> */}
             {/* <li><a className="nav-link scrollto" href="#team">Team</a></li> */}
-            <li class="dropdown">
+            <li className="dropdown">
               <a href="#">
 		<span>Services</span>
-		<i class="bi bi-chevron-down"></i>
+		<i className="bi bi-chevron-down"></i>
 	      </a>
               <ul>
                   <li><Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link></li>
