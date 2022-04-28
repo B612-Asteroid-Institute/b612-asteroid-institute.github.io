@@ -23,43 +23,48 @@ function Precovery() {
       <Header />
 
       <section id="heroPrecovery">
-        <div className="hero-container">
-          <h1>Test our Precovery Service</h1>
-        </div>
       </section>
 
       <section id="about" className="about">
         <div className="container">
           <div className="row content">
             <div className="col-lg-12">
-              <h2>ADAM Precovery Service</h2>
-              <p>The Asteroid Precovery Service extends the observational arc of candidate asteroids by searching the NOIRLab catalog for moving objects consistent with an input state vector.  Asteroid Precovery returns the list of observations (time, RA, DEC) of candidate precovery objects. For more information on the technique used, see <a href={'https://github.com/B612-Asteroid-Institute/precovery'} target={"_blank"} >the repository</a>.
-                <br></br>
-                <br></br>
-                <b>About the NOIRLab catalog:</b> The NoirLab source catalog contains sky images over 7 years down to roughly 23rd magnitude. For more information on the NOIRLab Dataset <a href={'https://datalab.noirlab.edu/nscdr2/index.php'} target={"_blank"} >click here</a>.
-              </p>
+              <h3>ADAM :: Precovery</h3>
+              <b>Search a set of catalogs for precovery observations of an object.</b>
 
-              <br></br>
-              <br></br>
+<br/><br/>
+
+The objects can be specified via orbital elements or state vectors (given in
+usual IAU76/J2000 reference frame as <a
+href={"https://ssd.jpl.nasa.gov/horizons/manual.html#frames"}>used by JPL
+Horizons</a>), or by selecting one of the sample objects.  The search will
+return all matches within 1" of the predicted object position.  The typical
+search time is about 1 minute.  The results will be downloladable as a CVS
+file.
+
+<br/><br/>
+
+Currently available catalogs:
+<ul>
+  <li><a href={'https://datalab.noirlab.edu/nscdr2/index.php'} target={"_blank"} >NOIRLab Source Catalog</a>,
+      with XXX observations spanning 9/23/2012 (MJD 56193) to 11/16/2019 (MJD 58804).
+  </li>
+</ul>
+
+<br/>
+
+Please suggest potential features or report any bugs to our <a href={"https://github.com/B612-Asteroid-Institute/precovery/issues"}>GitHub Issue Tracker</a>.
+<br/> <br/>
+
             </div>
 
-          </div>
-          <div className="row content">
+<hr/>
 
-            <div className="col-lg-4">
-              <h4>Test An Orbit</h4>
-              <p>State vectors can be input in Cartesian, Keplerian, or Cometary coordinates either as a single state vector, or via a .DES file. Precovery returns moving objects within this angular tolerance of the predicted location of the state vector at the time of the NOIRLab image. For now this is a single angular tolerance of 1 arc second.  Note that you may want to re-fit your orbit with newly found data points, and then search again for precovered observations with the updated orbit.  The reference frame used is that of JPL Horizons.
-                <br></br>
-                <br></br>
-                The NOIRLab data used by the Precovery Service span a seven year range, from 9/23/2012 (MJD 56193) to 11/16/2019 (MJD 58804). Please be aware of this window when picking objects to run - short arcs from recent observations will not be ideal.
-                <br></br>
-                <br></br>
-                After you have input your orbit, press Submit. When the process completes, a download button will appear, and you can download the precovered observations in .csv. Precovery can take up to a minute for each observation, so do not be alarmed if the submit button keeps spinning!
-              </p>
-            </div>
-            <div className="col-lg-8 pt-4 pt-lg-0">
+
+            <div className="col-lg-12">
               <PrecoveryForm />
             </div>
+
           </div>
 
         </div>

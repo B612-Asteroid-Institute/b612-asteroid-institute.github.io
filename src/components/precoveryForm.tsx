@@ -32,7 +32,7 @@ import { CSVLink } from 'react-csv'
 import axios from 'axios';
 import { map, intersection } from 'lodash'
 import { csv } from "d3-fetch"
-import { dateRangePickerDayClasses } from '@mui/lab';
+import { DateRangePickerDayClasses } from '@mui/lab';
 import { ConstructionOutlined } from '@mui/icons-material';
 import { updateReturn } from 'typescript';
 const queryString = require('query-string');
