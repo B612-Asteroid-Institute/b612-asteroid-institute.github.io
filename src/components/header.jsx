@@ -134,7 +134,7 @@ function Header() {
 
         <nav id="navbar" className="navbar">
           <ul>
-            <li><Link className="nav-link" to="/">Home</Link></li>
+            <li><Link className="nav-link" to={`/about`}>About</Link></li>
             {/* <li><a className="nav-link scrollto" href="#about">About</a></li> */}
             {/* <li><a className="nav-link scrollto" href="#services">The Platform</a></li> */}
             {/* <li><a className="nav-link scrollto" href="#research">Algorithms</a></li> */}

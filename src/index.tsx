@@ -6,6 +6,7 @@ import { HashRouter,
 import './css/index.css';
 import App from './App';
 import Precovery from './routes/precovery';
+import About from './routes/about';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
@@ -15,6 +16,7 @@ ReactDOM.render(
       <Routes>
         <Route path="/" element={<App />}/>
         <Route path="precovery" element={<Precovery />} />
+        <Route path="about" element={<About />} />
     </Routes>
     </React.StrictMode>
 
