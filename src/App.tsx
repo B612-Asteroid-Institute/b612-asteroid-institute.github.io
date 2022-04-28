@@ -14,7 +14,7 @@ function App() {
       
       <Header />
 
-      <section id="hero">
+      <section id="hero" className="hero">
         <div className="image-credit">
           <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank">Image by Eleanor Lutz</a>
         </div>

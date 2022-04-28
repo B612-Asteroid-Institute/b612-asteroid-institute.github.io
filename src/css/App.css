@@ -407,7 +407,7 @@ h1, h2, h3, h4, h5, h6 {
 --------------------------------------------------------------*/
 #heroPrecovery {
   width: 100%;
-  height: 10vh;
+  height: 104px;
   background: url("../img/solarsystem.jpg") top center;
   background-size: cover;
   position: relative;

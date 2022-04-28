@@ -45,10 +45,12 @@ function Header() {
   const [scroll, setScroll] = useState(0)
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { height, width } = useWindowDimensions();
+  const heroClientHeight = document.getElementsByClassName('hero')[0].clientHeight
+  const headerClientHeight = document.getElementById('header').clientHeight
 
   useEffect(() => {
     document.addEventListener("scroll", () => {
-      const scrollCheck = window.scrollY > 300
+      const scrollCheck = window.scrollY > heroClientHeight - headerClientHeight / 2
       if (scrollCheck !== scroll) {
         setScroll(scrollCheck)
       }
