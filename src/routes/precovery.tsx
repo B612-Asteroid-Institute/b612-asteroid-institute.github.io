@@ -22,7 +22,7 @@ function Precovery() {
     <div className="App">
       <Header />
 
-      <div id="heroPrecovery" className="hero">
+      <div id="heroThin" className="hero">
       </div>
 
       <section id="about" className="about">
