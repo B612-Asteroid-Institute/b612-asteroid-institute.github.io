@@ -77,6 +77,9 @@ function Header() {
           <Link className="nav-link" to="/">Home</Link>
         </ListItem>
         <ListItem >
+          <Link className="nav-link" to={`/about`}>About</Link>
+        </ListItem>
+        <ListItem >
           <Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link>
         </ListItem>
       </List>
