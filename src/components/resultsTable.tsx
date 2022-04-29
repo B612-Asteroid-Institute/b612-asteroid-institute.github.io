@@ -57,7 +57,13 @@ interface Column {
 
 
 const columns: readonly Column[] = [
-  { id: 'mjd_utc', label: 'MJD (UTC)', minWidth: 120, format: (value: number) => value.toFixed(5), },
+  { 
+    id: 'mjd_utc', 
+    label: 'MJD (UTC)', 
+    tooltip: 'MJD (UTC)',
+    minWidth: 120, 
+    format: (value: number) => value.toFixed(5), 
+  },
   {
     id: 'ra_deg',
     label: 'RA (\u00B0)',

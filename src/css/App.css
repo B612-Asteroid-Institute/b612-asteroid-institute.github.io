@@ -403,27 +403,16 @@ h1, h2, h3, h4, h5, h6 {
 
 
 /*--------------------------------------------------------------
-# Hero Precovery
+# Hero About
 --------------------------------------------------------------*/
-#heroPrecovery {
+#heroSplash {
   width: 100%;
-  height: 104px;
+  height: 100vh;
   background: url("../img/solarsystem.jpg") top center;
   background-size: cover;
   position: relative;
 }
-#heroPrecovery:before {
-  content: "";
-/*  background: rgba(5, 44, 63, 0.5); */
-/*  background: rgba(44, 22, 22, 0.5); */
-  background: rgba(0, 0, 0, 0.7);  
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-#heroPrecovery .hero-container {
+#heroSplash .hero-container {
   position: absolute;
   bottom: 0;
   top: 0;
@@ -436,7 +425,7 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   padding: 0 15px;
 }
-#heroPrecovery h1 {
+#heroSplash h1 {
   margin: 50px 0 15px 0;
   font-size: 48px;
   font-weight: 700;
@@ -444,7 +433,56 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   color: #fff;
 }
-#heroPrecovery h2 {
+#heroSplash h2 {
+  color: #eee;
+  margin-bottom: 30px;
+  font-size: 24px;
+}
+
+
+/*--------------------------------------------------------------
+# Hero Precovery
+--------------------------------------------------------------*/
+#heroThin {
+  width: 100%;
+  height: 104px;
+  background: url("../img/solarsystem.jpg") top center;
+  background-size: cover;
+  position: relative;
+}
+#heroThin:before {
+  content: "";
+/*  background: rgba(5, 44, 63, 0.5); */
+/*  background: rgba(44, 22, 22, 0.5); */
+  background: rgba(0, 0, 0, 0.7);  
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+#heroThin .hero-container {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 0 15px;
+}
+#heroThin h1 {
+  margin: 50px 0 15px 0;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 56px;
+  text-transform: uppercase;
+  color: #fff;
+}
+#heroThin h2 {
   color: #eee;
   margin-bottom: 30px;
   font-size: 24px;
