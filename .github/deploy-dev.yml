@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v2
       
       # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
-      - name: Set GitHub Actions as Commit Author
+      - name: Set GitHub Actions as Commit Author 
         run: |
           git config --global user.name github-actions
           git config --global user.email github-actions@github.com
