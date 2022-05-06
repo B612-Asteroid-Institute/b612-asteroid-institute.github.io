@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import * as yup from 'yup';
 import PrecoveryFormDes from "./precoveryFormDes"
 import PrecoveryFormSingle from "./precoveryFormSingle"
-import SampleObjectPicker from "./sampleObjectPicker"
 import ResultsTable from "./resultsTable"
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
@@ -11,12 +10,9 @@ import '../vendor/boxicons/css/boxicons.min.css'
 import '../vendor/glightbox/css/glightbox.min.css'
 import '../vendor/remixicon/remixicon.css'
 import '../vendor/swiper/swiper-bundle.min.css'
-import CSS from 'csstype';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Grid from '@mui/material/Grid';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
@@ -25,17 +21,12 @@ import Alert from '@mui/material/Alert';
 import Divider from '@mui/material/Divider';
 import AlertTitle from '@mui/material/AlertTitle';
 import LinearProgress from '@mui/material/LinearProgress';
-import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { CSVLink } from 'react-csv'
 import axios from 'axios';
 import { map, intersection } from 'lodash'
-import { csv } from "d3-fetch"
-import { DateRangePickerDayClasses } from '@mui/lab';
-import { ConstructionOutlined } from '@mui/icons-material';
-import { updateReturn } from 'typescript';
-const queryString = require('query-string');
+import queryString from 'query-string';
 
 
 
@@ -223,7 +214,7 @@ const PrecoveryForm = () => {
   const [displayError, setDisplayError] = useState<DisplayError>();
   const [progress, setProgress] = React.useState(0);
   // We will be modulating this for longer .des files
-  const [precoveryRuntime, setPrecoveryRuntime] = React.useState(45);
+  const [precoveryRuntime] = React.useState(45);
 
   var parsed = queryString.parse(window.location.href);
   const defaultValues = {
@@ -411,7 +402,7 @@ const PrecoveryForm = () => {
     return (coreErrors.length + specificErrors.length) > 0 || !allTouched
   }
 
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const watchFields = formMethods.watch(["inputType",
     "desInput",
     "coordinateSystem",

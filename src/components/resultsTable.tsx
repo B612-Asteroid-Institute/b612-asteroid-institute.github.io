@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
@@ -18,12 +18,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import TablePagination from '@mui/material/TablePagination';
 import Tooltip from '@mui/material/Tooltip';
-import HelpIcon from '@mui/icons-material/Help';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
-import { csv } from "d3-fetch"
-import { string } from 'yup';
 
 
 
@@ -105,7 +100,7 @@ const columns: readonly Column[] = [
   },
   {
     id: 'delta_ra_arcsec',
-    label: 'dRA (\")',
+    label: 'dRA (")',
     minWidth: 120,
     tooltip: "Discrepancy in RA between predicted and observed position.",
     align: 'right',
@@ -113,15 +108,15 @@ const columns: readonly Column[] = [
   },
   {
     id: 'ra_sigma_arcsec',
-    label: 'RA Error (\")',
-    tooltip: 'RA Error (\")',
+    label: 'RA Error (")',
+    tooltip: 'RA Error (")',
     minWidth: 120,
     align: 'right',
     format: (value: number) => value.toFixed(5),
   },
   {
     id: 'delta_dec_arcsec',
-    label: 'dDEC (\")',
+    label: 'dDEC (")',
     minWidth: 120,
     tooltip: "Discrepancy in DEC between predicted and observed position.",
     align: 'right',
@@ -129,8 +124,8 @@ const columns: readonly Column[] = [
   },
   {
     id: 'dec_sigma_arcsec',
-    label: 'DEC Error (\")',
-    tooltip: 'DEC Error (\")',
+    label: 'DEC Error (")',
+    tooltip: 'DEC Error (")',
     minWidth: 130,
     align: 'right',
     format: (value: number) => value.toFixed(5),
@@ -169,7 +164,7 @@ const columns: readonly Column[] = [
   },
   {
     id: 'distance_arcsec',
-    label: 'Distance (\")',
+    label: 'Distance (")',
     minWidth: 120,
     tooltip: "Distance (discrepancy) in arcsec between predicted position and candidate precovered object.",
     align: 'right',
@@ -205,9 +200,8 @@ const ResultsTable = (props: any) => {
 
   const { precoveryResults } = props
 
-  const { register, control, formState } = useFormContext();
-  const { errors } = formState
-
+  // const { register, control, formState } = useFormContext();
+  // const { errors } = formState
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);

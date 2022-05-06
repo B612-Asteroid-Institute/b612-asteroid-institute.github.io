@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-import * as yup from 'yup';
 import Header from "../components/header"
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
@@ -8,13 +6,6 @@ import '../vendor/boxicons/css/boxicons.min.css'
 import '../vendor/glightbox/css/glightbox.min.css'
 import '../vendor/remixicon/remixicon.css'
 import '../vendor/swiper/swiper-bundle.min.css'
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
-import { CSVLink } from 'react-csv'
-import axios from 'axios';
-import { map } from 'lodash'
-
 function About() {
 
   return (
@@ -24,7 +15,7 @@ function About() {
 
       <section id="hero" className="hero">
         <div className="image-credit">
-          <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank">Image by Eleanor Lutz</a>
+          <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank" rel="noreferrer" >Image by Eleanor Lutz</a>
         </div>
         <div className="hero-container">
           <h1>Asteroid Discovery, Analysis, and Mapping</h1>
@@ -341,9 +332,7 @@ function About() {
             <div className="member">
               <div className="member-img">
                 <img src={require("../img/team/SarahGreenstreet.jpg")} className="img-fluid" alt=""/>
-                <div className="social">
-                  <a href=""><i className="bi bi-linkedin"></i></a>
-                </div>
+
               </div>
               <div className="member-info">
                 <h4>Dr. Sarah Greenstreet</h4>
@@ -444,19 +433,15 @@ function About() {
       <div className="footer-top">
 
         <div className="social-links">
-          <a href="#" className="twitter"><i className="bx bxl-twitter"></i></a>
-          <a href="#" className="facebook"><i className="bx bxl-facebook"></i></a>
-          <a href="#" className="instagram"><i className="bx bxl-instagram"></i></a>
-          <a href="#" className="google-plus"><i className="bx bxl-skype"></i></a>
-          <a href="#" className="linkedin"><i className="bx bxl-linkedin"></i></a>
+          <a href="https://twitter.com/b612foundation" className="twitter"><i className="bx bxl-twitter"></i></a>
+          <a href="https://www.facebook.com/b612foundation/" className="facebook"><i className="bx bxl-facebook"></i></a>
+          <a href="https://www.linkedin.com/company/b612foundation-asteroid/" className="linkedin"><i className="bx bxl-linkedin"></i></a>
         </div>
         <br></br>
         <div >The Asteroid Decision Analysis and Mapping (ADAM) platform is a project of the B612 Foundation's  Asteroid Institute.</div>
     </div>
 
   </footer >
-
-    <a href="#" className="back-to-top d-flex align-items-center justify-content-center"><i className="bi bi-arrow-up-short"></i></a>
 
   {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />

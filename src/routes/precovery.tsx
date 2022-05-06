@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import * as yup from 'yup';
+import React from 'react';
 import Header from "../components/header"
 import PrecoveryForm from "../components/precoveryForm"
 import '../css/App.css';
@@ -9,12 +8,6 @@ import '../vendor/boxicons/css/boxicons.min.css'
 import '../vendor/glightbox/css/glightbox.min.css'
 import '../vendor/remixicon/remixicon.css'
 import '../vendor/swiper/swiper-bundle.min.css'
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
-import { CSVLink } from 'react-csv'
-import axios from 'axios';
-import { map } from 'lodash'
 
 function Precovery() {
 
@@ -46,7 +39,7 @@ function Precovery() {
 
               Currently available catalogs:
               <ul>
-                <li><a href={'https://datalab.noirlab.edu/nscdr2/index.php'} target={"_blank"} >NOIRLab Source Catalog</a>:
+                <li><a href={'https://datalab.noirlab.edu/nscdr2/index.php'} target={"_blank"} rel="noreferrer" >NOIRLab Source Catalog</a>:
                   Includes 1,763,381,575 observations spanning 9/23/2012 (MJD 56193) to 11/16/2019 (MJD 58804).
                   The full NSC has 67,822,619,019 observations of 3,932,838,064 unique
                   objects, but we exclude any object with more than four detections as those

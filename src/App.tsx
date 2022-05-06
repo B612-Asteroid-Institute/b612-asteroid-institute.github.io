@@ -16,7 +16,7 @@ function App() {
 
       <section id="heroSplash" className="hero">
         <div className="image-credit">
-          <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank">Image by Eleanor Lutz</a>
+          <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank" rel="noreferrer">Image by Eleanor Lutz</a>
         </div>
         <div className="hero-container">
           <h1>Asteroid Discovery, Analysis, and Mapping</h1>
