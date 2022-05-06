@@ -35,8 +35,8 @@ jobs:
       # - name : machine ls $HOME
       #   working-directory : "."
       #   run : "ls -la $HOME"
-      # - name : machine ls build
-      #   run : "ls -la build"
+      - name : machine ls build
+        run : "ls -la build"
         
       - name: Variable Substitution
         uses: microsoft/variable-substitution@v1
