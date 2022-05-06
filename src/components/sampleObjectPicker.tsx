@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable array-callback-return */
+import  { useEffect } from 'react';
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
@@ -10,7 +11,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { csv } from "d3-fetch"
 
 
@@ -18,8 +19,7 @@ const SampleObjectPicker = (props: any) => {
 
   const { sampleObjects, setSampleObjects } = props
 
-  const { register, control, setValue, formState, trigger } = useFormContext();
-  const { errors } = formState
+  const { control, setValue, trigger } = useFormContext();
 
   useEffect(() => {
     async function fetchSampleObj() {
@@ -27,6 +27,7 @@ const SampleObjectPicker = (props: any) => {
       setSampleObjects(data)
     }
     fetchSampleObj();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -102,7 +103,7 @@ const SampleObjectPicker = (props: any) => {
     <Controller
       control={control}
       name="sampleObjectPicker"
-      render={({ field: { onChange, value, ref } }) => (
+      render={({ field: { onChange, value } }) => (
         <FormControl fullWidth>
           <InputLabel id="selectLabel">Pick a Sample Object</InputLabel>
           <Select

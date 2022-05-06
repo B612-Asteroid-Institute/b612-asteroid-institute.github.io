@@ -4,10 +4,8 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Grid from '@mui/material/Grid';
 import SampleObjectPicker from "./sampleObjectPicker"
-import { useForm, FormProvider, Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 
-
-const axios = require('axios').default;
 
 
 
@@ -15,7 +13,7 @@ const PrecoveryFormSingle = (props: any) => {
 
   const { ControlledText, sampleObjects, setSampleObjects } = props
 
-  const { register, control, getValues, formState, trigger } = useFormContext();
+  const { control, getValues, formState, trigger } = useFormContext();
   const { errors } = formState
 
   return (

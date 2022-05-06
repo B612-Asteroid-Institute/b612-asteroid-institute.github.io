@@ -1,5 +1,4 @@
-import { React, useState, useEffect } from 'react';
-import logo from '../logo.svg';
+import {  useState, useEffect } from 'react';
 import { Outlet, Link } from "react-router-dom";
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
@@ -26,7 +25,7 @@ const getWindowDimensions = () => {
   };
 }
 
-const useWindowDimensions = () =>  {
+const useWindowDimensions = () => {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
@@ -44,7 +43,7 @@ const useWindowDimensions = () =>  {
 function Header() {
   const [scroll, setScroll] = useState(0)
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const heroClientHeight = document.getElementsByClassName('hero')[0]?.clientHeight
   const headerClientHeight = document.getElementById('header')?.clientHeight
 
@@ -126,43 +125,44 @@ function Header() {
   const user = uuidv4()
   return (
     <>
-    <header id="header" className={`fixed-top d-flex align-items-center ${scroll ? "header-scrolled" : "header-transparent"}`}>
-      <div className="container d-flex align-items-center justify-content-between">
+      <header id="header" className={`fixed-top d-flex align-items-center ${scroll ? "header-scrolled" : "header-transparent"}`}>
+        <div className="container d-flex align-items-center justify-content-between">
 
-        <div className="logo">
-          <h1>
-            <Link to="/">
-              <img src={require("../img/asteroid-institute.png")} alt="B612 ADAM" className="img-fluid" /></Link></h1>
-        </div>
+          <div className="logo">
+            <h1>
+              <Link to="/">
+                <img src={require("../img/asteroid-institute.png")} alt="B612 ADAM" className="img-fluid" /></Link></h1>
+          </div>
 
-        <nav id="navbar" className="navbar">
-          <ul>
-            <li><Link className="nav-link" to={`/about`}>About</Link></li>
-            {/* <li><a className="nav-link scrollto" href="#about">About</a></li> */}
-            {/* <li><a className="nav-link scrollto" href="#services">The Platform</a></li> */}
-            {/* <li><a className="nav-link scrollto" href="#research">Algorithms</a></li> */}
-            {/* <li><a className="nav-link scrollto" href="#team">Team</a></li> */}
-            <li className="dropdown">
-              <a href="#">
-		<span>Services</span>
-		<i className="bi bi-chevron-down"></i>
-	      </a>
-              <ul>
+          <nav id="navbar" className="navbar">
+            <ul>
+              <li><Link className="nav-link" to={`/about`}>About</Link></li>
+              {/* <li><a className="nav-link scrollto" href="#about">About</a></li> */}
+              {/* <li><a className="nav-link scrollto" href="#services">The Platform</a></li> */}
+              {/* <li><a className="nav-link scrollto" href="#research">Algorithms</a></li> */}
+              {/* <li><a className="nav-link scrollto" href="#team">Team</a></li> */}
+              <li className="dropdown">
+                
+                <a href="#/precovery">
+                  <span>Services</span>
+                  <i className="bi bi-chevron-down"></i>
+                </a>
+                <ul>
                   <li><Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link></li>
-              </ul>
-            </li>
-            <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
-          </ul>
-          {/* <i className="bi bi-list mobile-nav-toggle"></i> */}
-          { width < 991 ?
-            <DrawerNavigation /> : <></>
-          }
+                </ul>
+              </li>
+              <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
+            </ul>
+            {/* <i className="bi bi-list mobile-nav-toggle"></i> */}
+            {width < 991 ?
+              <DrawerNavigation /> : <></>
+            }
 
-          <Outlet />
-        </nav>
+            <Outlet />
+          </nav>
 
-      </div>
-    </header>
+        </div>
+      </header>
     </>
   )
 }
