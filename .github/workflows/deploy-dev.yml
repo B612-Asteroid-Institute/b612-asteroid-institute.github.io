@@ -39,7 +39,7 @@ jobs:
       - name: Build
         run: |
           cd build
-          echo ${{ env.URL }} > CNAME
+          echo $(echo ${{ env.URL }} | tr '[:lower:]' '[:upper:]') > CNAME
           yarn install
           yarn run predeploy
       

@@ -1,7 +1,7 @@
 name: Production Build and Deploy
 on:
   push:
-    branches: [ production ]
+    branches: [ master ]
     paths-ignore:
 #       - '.github/workflows/**'
       - '**.md'
@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: |
           cd build
-          echo ${{ env.URL }} > CNAME
+          echo $(echo ${{ env.URL }} | tr '[:lower:]' '[:upper:]') > CNAME
           yarn install
           yarn run predeploy
       
