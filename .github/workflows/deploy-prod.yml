@@ -1,18 +1,18 @@
-name: Development Build and Deploy
+name: Production Build and Deploy
 on:
   push:
-    branches: [ development ]
+    branches: [ production ]
     paths-ignore:
 #       - '.github/workflows/**'
       - '**.md'
 env:
-  URL: b612-asteroid-institute.github.com/adam-site-dev
+  URL: b612-asteroid-institute.github.com/adam-site-prod
 
 jobs:
   build:
     runs-on: ubuntu-latest
     environment:
-      name: development
+      name: production
       url: https://${{ env.URL }}
     steps:
       - name: Setup Node.js
@@ -35,13 +35,8 @@ jobs:
       # - name : machine ls $HOME
       #   working-directory : "."
       #   run : "ls -la $HOME"
-<<<<<<< HEAD
       - name : machine ls build
         run : "ls -la build"
-=======
-      # - name : machine ls build
-      #   run : "ls -la build"
->>>>>>> master
         
       - name: Variable Substitution
         uses: microsoft/variable-substitution@v1
@@ -63,7 +58,7 @@ jobs:
       - name: Checkout Dev Target
         uses: actions/checkout@v2
         with:
-          repository: b612-asteroid-institute/adam-site-dev
+          repository: b612-asteroid-institute/adam-site-prod
           path: 'deploy'
           token: ${{ secrets.PAT }}
       
