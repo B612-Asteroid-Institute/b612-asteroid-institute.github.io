@@ -7,6 +7,7 @@ on:
       - '**.md'
 env:
   URL: b612-asteroid-institute.github.com/adam-site-dev
+  API_URL: https://precovery-dev.api.b612.ai/
 
 jobs:
   build:
@@ -42,6 +43,8 @@ jobs:
           echo $(echo ${{ env.URL }} | tr '[:lower:]' '[:upper:]') > CNAME
           yarn install
           yarn run predeploy
+        env:
+          REACT_APP_API_URL: ${{ env.API_URL }}
       
       - name: Checkout Dev Target
         uses: actions/checkout@v2

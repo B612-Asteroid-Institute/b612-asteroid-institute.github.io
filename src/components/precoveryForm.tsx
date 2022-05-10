@@ -349,7 +349,7 @@ const PrecoveryForm = () => {
         setPrecoveryResults(matches)
       }
       else {
-        req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": formMethods.getValues("desInput"), "file_type": "des" })
+        req = await axios.post("process.env.REACT_APP_API_URL", { "in_string": formMethods.getValues("desInput"), "file_type": "des" })
         console.log(req)
         // const matches = req.data.matches
         const matches = map(req.data.matches, (m) => {
