@@ -18,6 +18,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Alert from '@mui/material/Alert';
+import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import AlertTitle from '@mui/material/AlertTitle';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -199,8 +200,15 @@ const validationSchema = Yup.object().shape({
     .moreThan(yup.ref("start_mjd")),
   "radius": Yup.number()
     .typeError("Must be a number")
-    .min(0.0, 'Must pick a positive value')
-    // .max(10.0, 'Values over 10" will result in numerous false positives'),
+    .min(0.0, 'Must pick a positive value'),
+  // .max(10.0, 'Values over 10" will result in numerous false positives'),
+  "emailDesired": Yup.boolean(),
+  "email": Yup.string().notRequired()
+    .when('emailDesired', {
+      "is": true,
+      "then": Yup.string().required("Please enter an email").email("Must be a valid email")
+    }),
+
 });
 
 
@@ -208,7 +216,6 @@ const validationSchema = Yup.object().shape({
 
 // get functions to build form with useForm() hook
 const PrecoveryForm = () => {
-
   const [precoveryResults, setPrecoveryResults] = useState<Observation[]>([]);
   const [sampleObjects, setSampleObjects] = useState<any[]>([]);
   const [displayError, setDisplayError] = useState<DisplayError>();
@@ -222,6 +229,8 @@ const PrecoveryForm = () => {
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
+    "emailDesired": true,
+    "email": "",
     "x": "",
     "y": "",
     "z": "",
@@ -245,7 +254,7 @@ const PrecoveryForm = () => {
     "mjd_tdbKep": "",
     "start_mjd": "56193",
     "end_mjd": "58804",
-    "radius": "1",
+    "radius": "5",
   }
 
   const formMethods = useForm({
@@ -257,7 +266,6 @@ const PrecoveryForm = () => {
 
   const { errors } = formMethods.formState;
   //Sample objects that the user can select and copy into the form to test Precovery
-
 
   const ControlledText = ({ name, label, error }: { name: any, label: string, error: any }) => {
     return (
@@ -297,31 +305,31 @@ const PrecoveryForm = () => {
     }, 500);
 
 
-  //TODO - add this as the submit behavior for localhost
-  //   const dat = {
-  //     'orbit_id': "100.00",
-  //   'ra_deg': 100.00,
-  //   'delta_ra_arcsec': 100.00,
-  //   'dec_deg': 100.00,
-  //   'delta_dec_arcsec': 100.00,
-  //   'ra_sigma_arcsec': 100.00,
-  //   'dec_sigma_arcsec': 100.00,
-  //   'mag': 100.00,
-  //   'mag_sigma': 100.00,
-  //   'distance_arcsec': 100.00,
-  //   'filter': "100.00",
-  //   'healpix_id': "100.00",
-  //   'mjd_utc': 100.00,
-  //   'obscode': "100.00",
-  //   'exposure_id': "100.00",
-  //   'observation_id': "100.00",
-  //   'pred_dec_deg':100.00,
-  //   'pred_ra_deg': 100.00,
-  //   'pred_vdec_degpday': 100.00,
-  //   'pred_vra_degpday': 100.00,
-  // }
-  // setPrecoveryResults([dat, dat,dat, dat,dat])
-  // return
+    //TODO - add this as the submit behavior for localhost
+    //   const dat = {
+    //     'orbit_id': "100.00",
+    //   'ra_deg': 100.00,
+    //   'delta_ra_arcsec': 100.00,
+    //   'dec_deg': 100.00,
+    //   'delta_dec_arcsec': 100.00,
+    //   'ra_sigma_arcsec': 100.00,
+    //   'dec_sigma_arcsec': 100.00,
+    //   'mag': 100.00,
+    //   'mag_sigma': 100.00,
+    //   'distance_arcsec': 100.00,
+    //   'filter': "100.00",
+    //   'healpix_id': "100.00",
+    //   'mjd_utc': 100.00,
+    //   'obscode': "100.00",
+    //   'exposure_id': "100.00",
+    //   'observation_id': "100.00",
+    //   'pred_dec_deg':100.00,
+    //   'pred_ra_deg': 100.00,
+    //   'pred_vdec_degpday': 100.00,
+    //   'pred_vra_degpday': 100.00,
+    // }
+    // setPrecoveryResults([dat, dat,dat, dat,dat])
+    // return
 
 
 
@@ -332,16 +340,16 @@ const PrecoveryForm = () => {
         const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1 / 3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
-          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
+          req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
         }
         else if (formMethods.getValues("coordinateSystem") === "cometary") {
           const { q, e, i, an, ap, tp, mjd_tdbCom } = formMethods.getValues()
-          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom, ...commonInputs })
+          req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom, ...commonInputs })
         }
         else if (formMethods.getValues("coordinateSystem") === "keplerian") {
           const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = formMethods.getValues()
           const stateVector = { a, e: eKep, i: iKep, an: anKep, ap: apKep, ma, mjd_tdb: mjd_tdbKep }
-          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { ...stateVector, ...commonInputs })
+          req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { ...stateVector, ...commonInputs })
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
@@ -349,7 +357,7 @@ const PrecoveryForm = () => {
         setPrecoveryResults(matches)
       }
       else {
-        req = await axios.post("process.env.REACT_APP_API_URL", { "in_string": formMethods.getValues("desInput"), "file_type": "des" })
+        req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": formMethods.getValues("desInput"), "file_type": "des" })
         console.log(req)
         // const matches = req.data.matches
         const matches = map(req.data.matches, (m) => {
@@ -381,7 +389,8 @@ const PrecoveryForm = () => {
     // if (!formMethods.formState.isDirty) return true
     let errorKeys = Object.keys(errors)
     let touchedFields = Object.keys(formMethods.formState.touchedFields)
-    let coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
+    const coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
+    const emailError = formMethods.getValues("emailDesired") && (intersection(["email"], errorKeys).length > 0 || intersection(["email"], touchedFields).length !== 1)
     let specificErrors = []
     let allTouched = false
     if (formMethods.getValues("inputType") === "single") {
@@ -399,14 +408,16 @@ const PrecoveryForm = () => {
       }
     }
     // console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys], coreErrors.length, specificErrors.length, allTouched)
-    return (coreErrors.length + specificErrors.length) > 0 || !allTouched
+    return (coreErrors.length + specificErrors.length) > 0 || !allTouched || emailError
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const watchFields = formMethods.watch(["inputType",
     "desInput",
     "coordinateSystem",
-    "sampleObjectPicker",]);
+    "sampleObjectPicker",
+    "emailDesired"
+  ]);
 
   return (
     <FormProvider {...formMethods} >
@@ -430,7 +441,7 @@ const PrecoveryForm = () => {
               />
             </Grid>}
 
-          
+
         </Grid>
 
         <br></br>
@@ -494,6 +505,52 @@ const PrecoveryForm = () => {
             /> :
             <PrecoveryFormDes />
         }
+
+
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Controller
+              control={formMethods.control}
+              name="emailDesired"
+              render={({ field: { onChange, value, ref } }) => (
+                <FormControlLabel
+                  sx={{ paddingTop: 1 }}
+                  value="single" control={
+                    <Checkbox
+                      checked={value}
+                      value={value}
+                      onChange={(e) => {
+                        onChange(e)
+                        formMethods.trigger("email")
+                      }}
+                    />}
+                  label="Email Me Candidate Cutouts" />
+              )}
+            />
+
+          </Grid>
+
+
+          <Grid item xs={4}>
+            <Controller
+              control={formMethods.control}
+              name={"email"}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <TextField
+                  fullWidth
+                  error={errors.email ? true : false}
+                  helperText={errors.email ? errors.email.message : ''}
+                  label={"Email"}
+                  disabled={!formMethods.getValues("emailDesired")}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={onBlur}
+                />
+              )}
+            />
+          </Grid>
+
+        </Grid>
 
 
         {!formMethods.formState.isSubmitting ?
