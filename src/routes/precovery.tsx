@@ -22,7 +22,7 @@ function Precovery() {
         <div className="container">
           <div className="row content">
             <div className="col-lg-12">
-              <h3>ADAM :: Precovery :: DEV VERSION</h3>
+              <h3>ADAM :: Precovery</h3>
               <b>Search a set of catalogs for precovery observations of an object.</b>
 
               <br /><br />
@@ -32,7 +32,7 @@ function Precovery() {
                 href={"https://ssd.jpl.nasa.gov/horizons/manual.html#frames"}>used by JPL
                 Horizons</a>), or by selecting one of the sample objects.  The search will
               return all matches within 1" of the predicted object position.  The typical
-              search time is about 1 minute.  The results will be downloladable as a CVS
+              search time is about 1 minute.  The results will be downloadable as a CVS
               file.
 
               <br /><br />

@@ -202,9 +202,9 @@ const validationSchema = Yup.object().shape({
     .typeError("Must be a number")
     .min(0.0, 'Must pick a positive value'),
   // .max(10.0, 'Values over 10" will result in numerous false positives'),
-  "emailDesired": Yup.boolean(),
+  "do_cutouts": Yup.boolean(),
   "email": Yup.string().notRequired()
-    .when('emailDesired', {
+    .when("do_cutouts", {
       "is": true,
       "then": Yup.string().required("Please enter an email").email("Must be a valid email")
     }),
@@ -229,7 +229,7 @@ const PrecoveryForm = () => {
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
-    "emailDesired": true,
+    "do_cutouts": true,
     "email": "",
     "x": "",
     "y": "",
@@ -336,8 +336,8 @@ const PrecoveryForm = () => {
     let req = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
-        const { coordinateSystem, start_mjd, end_mjd, radius } = formMethods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1 / 3600) }
+        const { coordinateSystem, start_mjd, end_mjd, radius, email, do_cutouts } = formMethods.getValues()
+        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, email, do_cutouts,  "tolerance": Number(radius) * (1 / 3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
           req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
@@ -390,7 +390,7 @@ const PrecoveryForm = () => {
     let errorKeys = Object.keys(errors)
     let touchedFields = Object.keys(formMethods.formState.touchedFields)
     const coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
-    const emailError = formMethods.getValues("emailDesired") && (intersection(["email"], errorKeys).length > 0 || intersection(["email"], touchedFields).length !== 1)
+    const emailError = formMethods.getValues("do_cutouts") && (intersection(["email"], errorKeys).length > 0 || intersection(["email"], touchedFields).length !== 1)
     let specificErrors = []
     let allTouched = false
     if (formMethods.getValues("inputType") === "single") {
@@ -416,7 +416,7 @@ const PrecoveryForm = () => {
     "desInput",
     "coordinateSystem",
     "sampleObjectPicker",
-    "emailDesired"
+    "do_cutouts"
   ]);
 
   return (
@@ -511,7 +511,7 @@ const PrecoveryForm = () => {
           <Grid item xs={4}>
             <Controller
               control={formMethods.control}
-              name="emailDesired"
+              name="do_cutouts"
               render={({ field: { onChange, value, ref } }) => (
                 <FormControlLabel
                   sx={{ paddingTop: 1 }}
@@ -541,7 +541,7 @@ const PrecoveryForm = () => {
                   error={errors.email ? true : false}
                   helperText={errors.email ? errors.email.message : ''}
                   label={"Email"}
-                  disabled={!formMethods.getValues("emailDesired")}
+                  disabled={!formMethods.getValues("do_cutouts")}
                   value={value}
                   onChange={onChange}
                   onBlur={onBlur}
