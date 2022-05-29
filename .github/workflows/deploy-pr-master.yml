@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create new repository for temporary deployment
-        uses: b612-asteroid-insitute/create-repository-action@v1
+        uses: b612-asteroid-institute/create-repository-action@v1
         with:
           name: ${{ env.PR_REPO_NAME }}
           # org: b612-asteroid-institute
