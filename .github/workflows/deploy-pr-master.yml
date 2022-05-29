@@ -18,7 +18,7 @@ jobs:
         uses: b612-asteroid-institute/create-repository-action@v1
         with:
           name: ${{ env.PR_REPO_NAME }}
-          # org: b612-asteroid-institute
+          org: b612-asteroid-institute
           access-token: ${{ secrets.PAT }}
     
   pr-build-deploy:
