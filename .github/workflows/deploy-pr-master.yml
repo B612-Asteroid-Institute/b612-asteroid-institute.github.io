@@ -8,6 +8,7 @@ on:
 
 env:
   PR_REPO_NAME: adam-site-${{ github.event.pull_request.node_id }}
+  URL: https://adam.b612.ai/adam-site-${{ github.event.pull_request.node_id }}/
   API_URL: https://precovery.api.b612.ai/
 
 jobs:
@@ -26,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: pr-staging
-      URL: https://adam.b612.ai/${{ env.PR_REPO_NAME }}/
+      url: https://adam.b612.ai/${{ env.PR_REPO_NAME }}/
     steps:
       - name: Setup Node.js
         uses: actions/setup-node@v2
