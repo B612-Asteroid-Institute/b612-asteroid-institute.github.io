@@ -8,7 +8,7 @@ on:
 
 env:
   PR_REPO_NAME: adam-site-${{ github.event.pull_request.node_id }}
-  REACT_APP_API_URL: https://precovery.api.b612.ai/
+  API_URL: https://precovery.api.b612.ai/
 
 jobs:
   create-page-host:
@@ -55,6 +55,8 @@ jobs:
           echo ${{ env.URL }} > CNAME
           yarn install
           yarn run predeploy
+        env:
+          REACT_APP_API_URL: ${{ env.API_URL }}
       
       - name: Checkout temporary deployment target repo
         uses: actions/checkout@v2
