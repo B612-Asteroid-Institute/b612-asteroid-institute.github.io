@@ -3,7 +3,7 @@ on:
   push:
     branches: [ master ]
     paths-ignore:
-#       - '.github/workflows/**'
+      - '.github/workflows/**'
       - '**.md'
 env:
   URL: adam.b612.ai
@@ -14,6 +14,7 @@ jobs:
     environment:
       name: production
       url: https://${{ env.URL }}
+      REACT_APP_API_URL: https://precovery.api.b612.ai/
     steps:
       - name: Setup Node.js
         uses: actions/setup-node@v2

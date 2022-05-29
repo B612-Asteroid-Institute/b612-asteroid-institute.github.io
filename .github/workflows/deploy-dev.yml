@@ -7,6 +7,7 @@ on:
       - '**.md'
 env:
   URL: b612-asteroid-institute.github.com/adam-site-dev
+  REACT_APP_API_URL: https://precovery-dev.api.b612.ai/
 
 jobs:
   build:

@@ -8,6 +8,7 @@ on:
 
 env:
   PR_REPO_NAME: adam-site-${{ github.event.pull_request.node_id }}
+  REACT_APP_API_URL: https://precovery.api.b612.ai/
 
 jobs:
   create-page-host:
