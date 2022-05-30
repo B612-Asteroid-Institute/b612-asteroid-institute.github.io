@@ -26,7 +26,7 @@ function Precovery() {
 
               <Alert variant="outlined" severity="info">
                 ADAM's Precovery Service is currently in a closed beta. If you would like to be kept 
-                in the loop about future developments, 
+                in the loop about future developments, including the release of our open beta, 
                 please follow <a href={'https://github.com/B612-Asteroid-Institute/precovery/issues/28'} target={"_blank"} rel="noreferrer" >this issue</a>.
               </Alert>
 
