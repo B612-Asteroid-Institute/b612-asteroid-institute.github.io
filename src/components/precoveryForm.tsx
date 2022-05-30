@@ -199,8 +199,10 @@ const validationSchema = Yup.object().shape({
     .moreThan(yup.ref("start_mjd")),
   "radius": Yup.number()
     .typeError("Must be a number")
-    .min(0.0, 'Must pick a positive value')
-    // .max(10.0, 'Values over 10" will result in numerous false positives'),
+    .min(0.0, 'Must pick a positive value'),
+  "password": Yup.string()
+    .required("Please enter a password")
+  // .max(10.0, 'Values over 10" will result in numerous false positives'),
 });
 
 
@@ -222,6 +224,7 @@ const PrecoveryForm = () => {
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
+    "password": "",
     "x": "",
     "y": "",
     "z": "",
@@ -328,20 +331,20 @@ const PrecoveryForm = () => {
     let req = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
-        const { coordinateSystem, start_mjd, end_mjd, radius } = formMethods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1 / 3600) }
+        const { coordinateSystem, start_mjd, end_mjd, radius, password } = formMethods.getValues()
+        const commonInputs = { password, "orbit_type": coordinateSystem, start_mjd, end_mjd, "tolerance": Number(radius) * (1 / 3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
-          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
+          req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
         }
         else if (formMethods.getValues("coordinateSystem") === "cometary") {
           const { q, e, i, an, ap, tp, mjd_tdbCom } = formMethods.getValues()
-          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom, ...commonInputs })
+          req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom, ...commonInputs })
         }
         else if (formMethods.getValues("coordinateSystem") === "keplerian") {
           const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = formMethods.getValues()
           const stateVector = { a, e: eKep, i: iKep, an: anKep, ap: apKep, ma, mjd_tdb: mjd_tdbKep }
-          req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { ...stateVector, ...commonInputs })
+          req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { ...stateVector, ...commonInputs })
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
@@ -381,7 +384,7 @@ const PrecoveryForm = () => {
     // if (!formMethods.formState.isDirty) return true
     let errorKeys = Object.keys(errors)
     let touchedFields = Object.keys(formMethods.formState.touchedFields)
-    let coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
+    let coreErrors = intersection(["start_mjd", "end_mjd", "radius", "password"], errorKeys)
     let specificErrors = []
     let allTouched = false
     if (formMethods.getValues("inputType") === "single") {

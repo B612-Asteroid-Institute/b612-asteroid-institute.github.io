@@ -2,6 +2,7 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import SampleObjectPicker from "./sampleObjectPicker"
 import { Controller, useFormContext } from 'react-hook-form';
@@ -24,30 +25,57 @@ const PrecoveryFormSingle = (props: any) => {
           <div>Complete </div>
       } */}
       <div>
-        <FormLabel id="demo-radio-buttons-group-label">Coordinate System</FormLabel>
-        <Controller
-          control={control}
-          name="coordinateSystem"
-          render={({ field: { onChange, value, ref } }) => (
-            <RadioGroup
-              row
-              aria-labelledby="demo-radio-buttons-group-label"
-              value={value}
-              onChange={(e) => {
-                onChange(e)
-                if (formState.isSubmitted) trigger()
-              }}
-            >
-              <FormControlLabel value="keplerian" control={<Radio />} label="Keplerian" />
-              <FormControlLabel value="cartesian" control={<Radio />} label="Cartesian" />
-              <FormControlLabel value="cometary" control={<Radio />} label="Cometary" />
-            </RadioGroup>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
 
-          )}
-        />
+            <FormLabel id="demo-radio-buttons-group-label">Coordinate System</FormLabel>
+            <Controller
+              control={control}
+              name="coordinateSystem"
+              render={({ field: { onChange, value, ref } }) => (
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(e)
+                    if (formState.isSubmitted) trigger()
+                  }}
+                >
+                  <FormControlLabel value="keplerian" control={<Radio />} label="Keplerian" />
+                  <FormControlLabel value="cartesian" control={<Radio />} label="Cartesian" />
+                  <FormControlLabel value="cometary" control={<Radio />} label="Cometary" />
+                </RadioGroup>
+
+              )}
+
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Controller
+              control={control}
+              name={"password"}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <TextField
+                  error={errors.password ? true : false}
+                  helperText={errors.password ? errors.password.message : ''}
+                  fullWidth
+                  type="password"
+                  label={"Password"}
+                  value={value}
+                  onChange={onChange}
+                  onBlur={() => {
+                    onBlur()
+                    // formMethods.setValue("end_mjd", (parseFloat(formMethods.getValues("start_mjd")) + 90).toString()) 
+                  }}
+                />
+              )}
+            />
+          </Grid>
+
+        </Grid>
+
         <br></br>
-
-
         <Grid container spacing={2}>
           {
             getValues("coordinateSystem") === "keplerian" ?
