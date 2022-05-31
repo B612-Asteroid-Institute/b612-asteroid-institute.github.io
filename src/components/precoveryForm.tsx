@@ -74,8 +74,8 @@ interface Observation {
 // }
 
 interface DisplayError {
-  errorCode: string,
-  errorString: string,
+  errorName: string,
+  errorDesc: string,
 }
 
 
@@ -328,7 +328,7 @@ const PrecoveryForm = () => {
 
 
 
-    let req = { data: { matches: [] } }
+    let req: any = { data: { matches: [] } }
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius, password } = formMethods.getValues()
@@ -348,6 +348,12 @@ const PrecoveryForm = () => {
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
+        if (req.data === "Wrong Password") {
+          setDisplayError({
+            errorName: "Wrong Password",
+            errorDesc: "An incorrect password was supplied."
+          })
+        }
         const matches = req.data.matches
         setPrecoveryResults(matches)
       }
@@ -368,8 +374,8 @@ const PrecoveryForm = () => {
     catch (error: any) {
       console.log(error)
       setDisplayError({
-        errorCode: error.name,
-        errorString: "An Unhandled Error Occured"
+        errorName: error.name,
+        errorDesc: "An Unhandled Error Occured"
       })
     }
 
@@ -520,22 +526,22 @@ const PrecoveryForm = () => {
 
         {
 
-          displayError?.errorCode &&
+          displayError?.errorName &&
 
           <Alert sx={{ marginTop: 3 }} severity="error">
-            <AlertTitle>{displayError.errorCode}</AlertTitle>
-            {displayError.errorString}
+            <AlertTitle>{displayError.errorName}</AlertTitle>
+            {displayError.errorDesc}
           </Alert>
         }
 
-        {precoveryResults.length > 0 && formMethods.formState.isSubmitted ?
+        {precoveryResults?.length > 0 && formMethods.formState.isSubmitted ?
           <>
             <ResultsTable
               precoveryResults={precoveryResults}
             />
           </>
           :
-          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting) ?
+          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting && !displayError?.errorName) ?
             <Alert sx={{ marginTop: 3 }} severity="warning">
               No precoveries were found for this orbit in the specified time interval.
             </Alert>
