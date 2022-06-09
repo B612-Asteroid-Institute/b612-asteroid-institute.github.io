@@ -19,11 +19,6 @@ const PrecoveryFormSingle = (props: any) => {
 
   return (
     <>
-      {/* {
-        postResult ?
-          <div>"Loading" </div> :
-          <div>Complete </div>
-      } */}
       <div>
         <Grid container spacing={2}>
           <Grid item xs={4}>
@@ -51,7 +46,8 @@ const PrecoveryFormSingle = (props: any) => {
 
             />
           </Grid>
-          <Grid item xs={4}>
+          {/* Re-enable me for password input */}
+          {/* <Grid item xs={4}>
             <Controller
               control={control}
               name={"password"}
@@ -71,7 +67,7 @@ const PrecoveryFormSingle = (props: any) => {
                 />
               )}
             />
-          </Grid>
+          </Grid> */}
 
         </Grid>
 

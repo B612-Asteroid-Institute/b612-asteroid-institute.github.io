@@ -201,7 +201,7 @@ const validationSchema = Yup.object().shape({
     .typeError("Must be a number")
     .min(0.0, 'Must pick a positive value'),
   "password": Yup.string()
-    .required("Please enter a password")
+    .notRequired(),
   // .max(10.0, 'Values over 10" will result in numerous false positives'),
 });
 
