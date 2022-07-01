@@ -57,13 +57,13 @@ function Precovery() {
                 </li>
               </ul>
 
+
               <br />
 
               Please suggest potential features or report any bugs to our <a href={"https://github.com/B612-Asteroid-Institute/precovery/issues"}>GitHub Issue Tracker</a>.
               <br /> <br />
 
             </div>
-
             <hr />
 
 

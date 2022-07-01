@@ -6,7 +6,7 @@ on:
 #       - '.github/workflows/**'
       - '**.md'
 env:
-  URL: b612-asteroid-institute.github.com/adam-site-dev
+  URL: dev.adam.b612.ai
   API_URL: https://precovery-dev.api.b612.ai/
 
 jobs:
@@ -29,19 +29,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: 'build'
-        
       - name: Variable Substitution
         uses: microsoft/variable-substitution@v1
         with:
           files: 'build/package.json'
         env:
           homepage: https://${{ env.URL }}
-        
-        
       - name: Build
         run: |
           cd build
-          echo $(echo ${{ env.URL }} | tr '[:lower:]' '[:upper:]') > CNAME
+          echo ${{ env.URL }} > CNAME
           yarn install
           yarn run predeploy
         env:
