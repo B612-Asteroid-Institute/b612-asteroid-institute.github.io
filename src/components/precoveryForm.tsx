@@ -221,7 +221,7 @@ const PrecoveryForm = () => {
   const [displayError, setDisplayError] = useState<DisplayError>();
   const [progress, setProgress] = React.useState(0);
   // We will be modulating this for longer .des files
-  const [precoveryRuntime] = React.useState(45);
+  const [precoveryRuntime, setPrecoveryRuntime] = useState(50);
 
   var parsed = queryString.parse(window.location.href);
   const defaultValues = {
@@ -333,7 +333,7 @@ const PrecoveryForm = () => {
 
 
 
-    let req = { data: { matches: [] } }
+    let req = { data: { matches: [], 'error message': undefined } }
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius, email, do_cutouts } = formMethods.getValues()
@@ -353,6 +353,15 @@ const PrecoveryForm = () => {
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
+        
+        if (req.data['error message']) {
+          setDisplayError({
+            errorCode: "Error",
+            errorString: req.data['error message']
+          })
+          clearInterval(timer)
+          return
+        }
         const matches = req.data.matches
         setPrecoveryResults(matches)
       }
@@ -522,6 +531,7 @@ const PrecoveryForm = () => {
                       onChange={(e) => {
                         onChange(e)
                         formMethods.trigger("email")
+                        setPrecoveryRuntime(e.target.checked ? 50 : 30)
                       }}
                     />}
                   label="Email Me Candidate Cutouts" />
@@ -589,7 +599,7 @@ const PrecoveryForm = () => {
             />
           </>
           :
-          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting) ?
+          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting && !displayError?.errorCode) ?
             <Alert sx={{ marginTop: 3 }} severity="warning">
               No precoveries were found for this orbit in the specified time interval.
             </Alert>
