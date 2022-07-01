@@ -75,8 +75,8 @@ interface Observation {
 // }
 
 interface DisplayError {
-  errorCode: string,
-  errorString: string,
+  errorName: string,
+  errorDesc: string,
 }
 
 
@@ -356,8 +356,8 @@ const PrecoveryForm = () => {
         
         if (req.data['error message']) {
           setDisplayError({
-            errorCode: "Error",
-            errorString: req.data['error message']
+            errorName: "Error",
+            errorDesc: req.data['error message']
           })
           clearInterval(timer)
           return
@@ -382,8 +382,8 @@ const PrecoveryForm = () => {
     catch (error: any) {
       console.log(error)
       setDisplayError({
-        errorCode: error.name,
-        errorString: "An Unhandled Error Occured"
+        errorName: error.name,
+        errorDesc: "An Unhandled Error Occured"
       })
     }
 
@@ -584,22 +584,22 @@ const PrecoveryForm = () => {
 
         {
 
-          displayError?.errorCode &&
+          displayError?.errorName &&
 
           <Alert sx={{ marginTop: 3 }} severity="error">
-            <AlertTitle>{displayError.errorCode}</AlertTitle>
-            {displayError.errorString}
+            <AlertTitle>{displayError.errorName}</AlertTitle>
+            {displayError.errorDesc}
           </Alert>
         }
 
-        {precoveryResults.length > 0 && formMethods.formState.isSubmitted ?
+        {precoveryResults?.length > 0 && formMethods.formState.isSubmitted ?
           <>
             <ResultsTable
               precoveryResults={precoveryResults}
             />
           </>
           :
-          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting && !displayError?.errorCode) ?
+          (formMethods.formState.isSubmitted && !formMethods.formState.isSubmitting && !displayError?.errorName) ?
             <Alert sx={{ marginTop: 3 }} severity="warning">
               No precoveries were found for this orbit in the specified time interval.
             </Alert>
