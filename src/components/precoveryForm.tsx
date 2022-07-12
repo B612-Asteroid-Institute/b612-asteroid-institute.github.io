@@ -219,6 +219,7 @@ const PrecoveryForm = () => {
   const [precoveryResults, setPrecoveryResults] = useState<Observation[]>([]);
   const [sampleObjects, setSampleObjects] = useState<any[]>([]);
   const [displayError, setDisplayError] = useState<DisplayError>();
+  const [logMessage, setLogMessage] = useState<String>();
   const [progress, setProgress] = React.useState(0);
   // We will be modulating this for longer .des files
   const [precoveryRuntime, setPrecoveryRuntime] = useState(50);
@@ -294,6 +295,7 @@ const PrecoveryForm = () => {
     setProgress(0)
     setPrecoveryResults([])
     setDisplayError(undefined)
+    setLogMessage(undefined)
     const timer = setInterval(() => {
       setProgress((oldProgress) => {
         // if (oldProgress === 100) {
@@ -333,7 +335,7 @@ const PrecoveryForm = () => {
 
 
 
-    let req = { data: { matches: [], 'error message': undefined } }
+    let req = { data: { matches: [], 'error message': undefined, email_response: undefined } }
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius, email, do_cutouts } = formMethods.getValues()
@@ -364,6 +366,10 @@ const PrecoveryForm = () => {
         }
         const matches = req.data.matches
         setPrecoveryResults(matches)
+
+        if ("email_response" in req.data) {
+          setLogMessage(req.data.email_response)
+        }
       }
       else {
         req = await axios.post("https://precovery.api.b612.ai/precovery/webinput", { "in_string": formMethods.getValues("desInput"), "file_type": "des" })
@@ -589,6 +595,15 @@ const PrecoveryForm = () => {
           <Alert sx={{ marginTop: 3 }} severity="error">
             <AlertTitle>{displayError.errorName}</AlertTitle>
             {displayError.errorDesc}
+          </Alert>
+        }
+
+        {
+
+          logMessage &&
+
+          <Alert sx={{ marginTop: 3 }} severity="success">
+            {logMessage}
           </Alert>
         }
 
