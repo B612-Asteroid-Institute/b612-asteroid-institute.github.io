@@ -230,7 +230,7 @@ const PrecoveryForm = () => {
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
-    "do_cutouts": true,
+    "do_cutouts": false,
     "email": "",
     "x": "",
     "y": "",
