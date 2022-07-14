@@ -5,6 +5,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 // import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import SampleObjectPicker from "./sampleObjectPicker"
+import SBDBSearchForm from "./sbdbSearchForm"
 import { Controller, useFormContext } from 'react-hook-form';
 
 
@@ -20,6 +21,9 @@ const PrecoveryFormSingle = (props: any) => {
   return (
     <>
       <div>
+        <SBDBSearchForm
+
+        />
         <Grid container spacing={2}>
           <Grid item xs={4}>
 

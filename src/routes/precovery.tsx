@@ -23,14 +23,14 @@ function Precovery() {
         <div className="container">
           <div className="row content">
             <div className="col-lg-12">
-
+{/* 
               <Alert variant="outlined" severity="info">
                 ADAM's Precovery Service is currently in a closed beta. If you would like to be kept 
                 in the loop about future developments, including the release of our open beta, 
                 please follow <a href={'https://github.com/B612-Asteroid-Institute/precovery/issues/28'} target={"_blank"} rel="noreferrer" >this issue</a>.
               </Alert>
 
-              <br /><br />
+              <br /><br /> */}
               <h3>ADAM :: Precovery</h3>
               <b>Search a set of catalogs for precovery observations of an object.</b>
 
@@ -40,8 +40,8 @@ function Precovery() {
               usual IAU76/J2000 reference frame as <a
                 href={"https://ssd.jpl.nasa.gov/horizons/manual.html#frames"}>used by JPL
                 Horizons</a>), or by selecting one of the sample objects.  The search will
-              return all matches within 1" of the predicted object position.  The typical
-              search time is about 1 minute.  The results will be downloladable as a CSV
+              return all matches within 5" of the predicted object position.  The typical
+              search time is about 1 minute.  The results will be downloadable as a CSV
               file.
 
               <br /><br />

@@ -208,6 +208,7 @@ const validationSchema = Yup.object().shape({
       "is": true,
       "then": Yup.string().required("Please enter an email").email("Must be a valid email")
     }),
+  "mbdbSearchInputail": Yup.string().notRequired(),
 
 });
 
@@ -230,7 +231,7 @@ const PrecoveryForm = () => {
     "desInput": '!!OID FORMAT x y z xdot ydot zdot H t_0 INDEX N_PAR MOID COMPCODE\nS0000001a  CAR 3.1814935923872047 -1.7818842866371896 0.5413047375097928 0.003965128676498027 0.006179760229698789 0.003739659079259056 10.315000000000 56534.00089159205 1 6 -1 MOPS',
     "coordinateSystem": 'keplerian',
     "sampleObjectPicker": "default",
-    "do_cutouts": true,
+    "do_cutouts": false,
     "email": "",
     "x": "",
     "y": "",
@@ -256,6 +257,7 @@ const PrecoveryForm = () => {
     "start_mjd": "56193",
     "end_mjd": "58804",
     "radius": "5",
+    "mbdbSearchInput": ""
   }
 
   const formMethods = useForm({
@@ -339,7 +341,7 @@ const PrecoveryForm = () => {
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius, email, do_cutouts } = formMethods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, email, do_cutouts,  "tolerance": Number(radius) * (1 / 3600) }
+        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, email, do_cutouts, "tolerance": Number(radius) * (1 / 3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
           req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
@@ -355,7 +357,7 @@ const PrecoveryForm = () => {
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
-        
+
         if (req.data['error message']) {
           setDisplayError({
             errorName: "Error",
@@ -431,7 +433,8 @@ const PrecoveryForm = () => {
     "desInput",
     "coordinateSystem",
     "sampleObjectPicker",
-    "do_cutouts"
+    "do_cutouts",
+    "mbdbSearchInput"
   ]);
 
   return (
