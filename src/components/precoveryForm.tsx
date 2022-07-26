@@ -465,7 +465,7 @@ const PrecoveryForm = () => {
         <br></br>
 
         <br></br>
-        {parsed.debug === "true" &&
+        {/* {parsed.debug === "true" && */}
           <>
             <Grid container spacing={2}>
               <Grid item xs={4}>
@@ -513,7 +513,7 @@ const PrecoveryForm = () => {
 
             <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
           </>
-        }
+        {/* } */}
         {
           formMethods.getValues("inputType") === "single" ?
             <PrecoveryFormSingle

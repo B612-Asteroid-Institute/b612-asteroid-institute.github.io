@@ -1,11 +1,10 @@
 import TextField from '@mui/material/TextField';
 import { Controller, useFormContext } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Button from '@mui/material/Button';
-import { AnyMessageParams } from 'yup/lib/types';
 import axios from 'axios';
 
 interface HorizonsSearchResult {
@@ -23,22 +22,19 @@ interface HorizonsSearchResult {
   message?: String
 }
 
+const jdToMjd = (jd: number) => {
+  return jd - 2400000.5
+}
 
 const SBDBSearchForm = (props: any) => {
-
-  const { ControlledText, sampleObjects, setSampleObjects } = props
 
   const [searchResult, setSearchResult] = useState<HorizonsSearchResult>();
   const { control, getValues, formState, trigger, getFieldState, setValue } = useFormContext();
   const { errors } = formState
 
-
   const setFormFromSearchResult = () => {
-    trigger()
-
-    //TODO set an alternate on orbit.source
-    //basically the returned orbital elements change depending on the type (main belt, comet, etc)
     setValue("coordinateSystem", 'cometary', { shouldTouch: true, shouldValidate: true, shouldDirty: true })
+    setValue("sampleObjectPicker", 'default', { shouldTouch: true, shouldValidate: true, shouldDirty: true })
     setValue("q", searchResult?.q, { shouldTouch: true, shouldValidate: true, shouldDirty: true })
     setValue("e", searchResult?.e, { shouldTouch: true, shouldValidate: true, shouldDirty: true })
     setValue("i", searchResult?.i, { shouldTouch: true, shouldValidate: true, shouldDirty: true })
@@ -46,8 +42,13 @@ const SBDBSearchForm = (props: any) => {
     setValue("ap", searchResult?.ap, { shouldTouch: true, shouldValidate: true, shouldDirty: true })
     setValue("tp", searchResult?.tp, { shouldTouch: true, shouldValidate: true, shouldDirty: true })
     setValue("mjd_tdbCom", searchResult?.mjd_tdb, { shouldTouch: true, shouldValidate: true, shouldDirty: true })
-    trigger()
   }
+
+  // Set the form state once searchResult is updated
+  useEffect(() => {
+    setFormFromSearchResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchResult]);
 
   const onSearch = async () => {
     setSearchResult(undefined)
@@ -57,37 +58,26 @@ const SBDBSearchForm = (props: any) => {
 
     console.log(req)
     if (req.status === 200 && "object" in req.data) {
+      const getElementsValueByName = (k: string) => {
+        return req.data.orbit.elements.find((obj: any) => obj.name === k).value
+      }
       const foundObj: HorizonsSearchResult = {
         fullName: req.data.object.fullname,
         orbitClassName: req.data.object.orbit_class.name,
-        q: req.data.orbit.elements[1].value,
-        e: req.data.orbit.elements[0].value,
-        i: req.data.orbit.elements[5].value,
-        an: req.data.orbit.elements[3].value,
-        ap: req.data.orbit.elements[4].value,
-        tp: req.data.orbit.elements[2].value.slice(2),
-        mjd_tdb: req.data.orbit.epoch.slice(2),
+        q: getElementsValueByName("q"),
+        e: getElementsValueByName("e"),
+        i: getElementsValueByName("i"),
+        an: getElementsValueByName("om"),
+        ap: getElementsValueByName("w"),
+        tp: jdToMjd(parseFloat(getElementsValueByName("tp"))),
+        mjd_tdb: jdToMjd(parseFloat(req.data.orbit.epoch )),
       }
-      //alternate orbital element returns
-      // if (req.status === 200 && "object" in req.data) {
-      //   const foundObj: HorizonsSearchResult = {
-      //     fullName: req.data.object.fullname,
-      //     orbitClassName: req.data.object.orbit_class.name,
-      //     a: req.data.orbit.elements[1].value,
-      //     e: req.data.orbit.elements[0].value,
-      //     i: req.data.orbit.elements[3].value,
-      //     an: req.data.orbit.elements[4].value,
-      //     ap: req.data.orbit.elements[5].value,
-      //     ma: req.data.orbit.elements[6].value,
-      //     mjd_tdb: req.data.orbit.epoch.slice(2),
-      //   }
       setSearchResult(foundObj)
-      setFormFromSearchResult()
     }
     if (req.status === 200 && "message" in req.data) {
       setSearchResult({ message: req.data.message })
     }
-
+    trigger()
   }
 
   const searchDisabled = () => {
@@ -113,7 +103,6 @@ const SBDBSearchForm = (props: any) => {
                 onChange={onChange}
                 onBlur={() => {
                   onBlur()
-                  // setValue("end_mjd", (parseFloat(getValues("start_mjd")) + 90).toString()) 
                 }}
               />
             )}
