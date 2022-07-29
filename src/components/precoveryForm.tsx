@@ -55,25 +55,6 @@ interface Observation {
 }
 
 
-// interface SampleObject {
-//   M: string
-//   a: string
-//   ap: string
-//   e: string
-//   i: string
-//   mjd_tdb: string
-//   obj_id: string
-//   q: string
-//   raan: string
-//   tp: string
-//   vx: string
-//   vy: string
-//   vz: string
-//   x: string
-//   y: string
-//   z: string
-// }
-
 interface DisplayError {
   errorName: string,
   errorDesc: string,
@@ -212,8 +193,6 @@ const validationSchema = Yup.object().shape({
 });
 
 
-
-
 // get functions to build form with useForm() hook
 const PrecoveryForm = () => {
   const [precoveryResults, setPrecoveryResults] = useState<Observation[]>([]);
@@ -266,8 +245,9 @@ const PrecoveryForm = () => {
   })
 
   const { errors } = formMethods.formState;
-  //Sample objects that the user can select and copy into the form to test Precovery
 
+
+  // This controlled text component is passed downstream to add simple form-enabled text fields 
   const ControlledText = ({ name, label, error }: { name: any, label: string, error: any }) => {
     return (
       <Controller
@@ -307,34 +287,8 @@ const PrecoveryForm = () => {
     }, 500);
 
 
-    //TODO - add this as the submit behavior for localhost
-    //   const dat = {
-    //     'orbit_id': "100.00",
-    //   'ra_deg': 100.00,
-    //   'delta_ra_arcsec': 100.00,
-    //   'dec_deg': 100.00,
-    //   'delta_dec_arcsec': 100.00,
-    //   'ra_sigma_arcsec': 100.00,
-    //   'dec_sigma_arcsec': 100.00,
-    //   'mag': 100.00,
-    //   'mag_sigma': 100.00,
-    //   'distance_arcsec': 100.00,
-    //   'filter': "100.00",
-    //   'healpix_id': "100.00",
-    //   'mjd_utc': 100.00,
-    //   'obscode': "100.00",
-    //   'exposure_id': "100.00",
-    //   'observation_id': "100.00",
-    //   'pred_dec_deg':100.00,
-    //   'pred_ra_deg': 100.00,
-    //   'pred_vdec_degpday': 100.00,
-    //   'pred_vra_degpday': 100.00,
-    // }
-    // setPrecoveryResults([dat, dat,dat, dat,dat])
-    // return
 
-
-
+    // Select the correct for values to send based on the chosen orbit type
     let req = { data: { matches: [], 'error message': undefined, email_response: undefined } }
     try {
       if (formMethods.getValues("inputType") === "single") {
@@ -401,7 +355,6 @@ const PrecoveryForm = () => {
   // This is custom validation to control whether the submit button should be disabled. Essentially we only want them to be able to submit
   // if the current input type's relevant fields are validated.
   const submitDisabled = () => {
-    // if (!formMethods.formState.isDirty) return true
     let errorKeys = Object.keys(errors)
     let touchedFields = Object.keys(formMethods.formState.touchedFields)
     const coreErrors = intersection(["start_mjd", "end_mjd", "radius"], errorKeys)
@@ -438,6 +391,8 @@ const PrecoveryForm = () => {
     <FormProvider {...formMethods} >
       <form onSubmit={formMethods.handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
+
+          {/* Pick the input mode - single orbit or .des file input. Disabled out of Debug mode  */}
           {parsed.debug === "true" &&
             <Grid item xs={4}>
               <Controller
@@ -462,6 +417,9 @@ const PrecoveryForm = () => {
         <br></br>
 
         <br></br>
+
+        {/* Picking start/end mjd limits and threshold */}
+        {/* This component is disabled out of */}
         {parsed.debug === "true" &&
           <>
             <Grid container spacing={2}>
@@ -511,6 +469,7 @@ const PrecoveryForm = () => {
             <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
           </>
         }
+        
         {
           formMethods.getValues("inputType") === "single" ?
             <PrecoveryFormSingle
@@ -568,7 +527,7 @@ const PrecoveryForm = () => {
 
         </Grid>
 
-
+        {/* Submit button and conditional display logic */}
         {!formMethods.formState.isSubmitting ?
           <Button sx={{ marginTop: 3 }} color="primary" variant="contained" fullWidth type="submit" disabled={submitDisabled()} >
             {formMethods.formState.isSubmitted ? "Resubmit" : "Submit"}
@@ -578,6 +537,7 @@ const PrecoveryForm = () => {
           </LoadingButton>
         }
 
+        {/* Progress indicator */}
         {formMethods.formState.isSubmitting &&
           <LinearProgress
             variant="determinate"
@@ -588,25 +548,24 @@ const PrecoveryForm = () => {
             value={progress} />
         }
 
+        {/* Catch-all error message */}
         {
-
           displayError?.errorName &&
-
           <Alert sx={{ marginTop: 3 }} severity="error">
             <AlertTitle>{displayError.errorName}</AlertTitle>
             {displayError.errorDesc}
           </Alert>
         }
 
+        {/* Logging messages returned from API */}
         {
-
           logMessage &&
-
           <Alert sx={{ marginTop: 3 }} severity="success">
             {logMessage}
           </Alert>
         }
 
+        {/* Results table, or warning of no precoveries found */}
         {precoveryResults?.length > 0 && formMethods.formState.isSubmitted ?
           <>
             <ResultsTable
