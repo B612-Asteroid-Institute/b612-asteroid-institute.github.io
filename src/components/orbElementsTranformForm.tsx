@@ -1,3 +1,4 @@
+// @ts-nocheck 
 import React, { useState } from 'react';
 import * as yup from 'yup';
 import PrecoveryFormDes from "./precoveryFormDes"
@@ -305,6 +306,7 @@ const OrbElementsTransformForm = () => {
 
   const onSubmit = async (data: any) => {
 
+    setTransformResults([])
     // This sets up an interval timer to handle the progress bar. it is cleared on return
 
 
@@ -316,48 +318,65 @@ const OrbElementsTransformForm = () => {
       const commonInputs = { "orbit_type": coordinateSystem }
       if (formMethods.getValues("coordinateSystem") === "cartesian") {
         const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
-        req = await axios.post(`${process.env.REACT_APP_API_URL}from_cartesian`, { x, y, z, vx, vy, vz, mjd_tdb })
+        req = await axios.post(`${process.env.REACT_APP_API_URL}adam/transform/orbital_elements/from_cartesian`, { x, y, z, vx, vy, vz, mjd_tdb })
       }
       else if (formMethods.getValues("coordinateSystem") === "cometary") {
         const { q, e, i, an, ap, tp, mjd_tdbCom } = formMethods.getValues()
-        req = await axios.post(`${process.env.REACT_APP_API_URL}from_cometary`, { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom })
+        req = await axios.post(`${process.env.REACT_APP_API_URL}adam/transform/orbital_elements/from_cometary`, { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom })
       }
       else if (formMethods.getValues("coordinateSystem") === "keplerian") {
         const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = formMethods.getValues()
-        const stateVector = { a, e: eKep, i: iKep, an: anKep, ap: apKep, ma, mjd_tdb: mjd_tdbKep }
-        req = await axios.post(`${process.env.REACT_APP_API_URL}from_keplerian`, { ...stateVector })
+        const stateVector = { a, e: eKep, i: iKep, an: anKep, ap: apKep, "M": ma, mjd_tdb: mjd_tdbKep }
+        req = await axios.post(`${process.env.REACT_APP_API_URL}adam/transform/orbital_elements/from_keplerian`, { ...stateVector })
         // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
       }
       console.log(req)
 
 
-      setTransformResults([
-        {
-          coordSystem: "cartesian",
-          orbElements: [
-            { key: "x", value: 1234, },
-            { key: "y", value: 1234, },
-            { key: "z", value: 1234, },
-            { key: "vx", value: 1234, },
-            { key: "vy", value: 1234, },
-            { key: "vz", value: 1234, },
-            { key: "mjd_tdb", value: 1234, },
-          ]
-        },
-        {
-          coordSystem: "keplerian",
-          orbElements: [
-            { key: "a", value: 1234, },
-            { key: "e", value: 1234, },
-            { key: "i", value: 1234, },
-            { key: "an", value: 1234, },
-            { key: "ap", value: 1234, },
-            { key: "ma", value: 1234, },
-            { key: "mjd_tdb", value: 1234, },
-          ]
-        },
+      if (req.data) {
+        let transResults = []
+        for (const [coordSystem, elements] of Object.entries(req.data.orbital_elements)) {
+          let orbElements = []
 
-      ])
+          for (const [param, paramValue] of Object.entries(elements)) {
+            orbElements.push({ key: param, value: paramValue })
+          }
+          transResults.push({
+            coordSystem: coordSystem,
+            orbElements: orbElements
+          })
+          
+        }
+        setTransformResults(transResults)
+      }
+
+      // setTransformResults([
+      //   {
+      //     coordSystem: "cartesian",
+      //     orbElements: [
+      //       { key: "x", value: 1234, },
+      //       { key: "y", value: 1234, },
+      //       { key: "z", value: 1234, },
+      //       { key: "vx", value: 1234, },
+      //       { key: "vy", value: 1234, },
+      //       { key: "vz", value: 1234, },
+      //       { key: "mjd_tdb", value: 1234, },
+      //     ]
+      //   },
+      //   {
+      //     coordSystem: "keplerian",
+      //     orbElements: [
+      //       { key: "a", value: 1234, },
+      //       { key: "e", value: 1234, },
+      //       { key: "i", value: 1234, },
+      //       { key: "an", value: 1234, },
+      //       { key: "ap", value: 1234, },
+      //       { key: "ma", value: 1234, },
+      //       { key: "mjd_tdb", value: 1234, },
+      //     ]
+      //   },
+
+      // ])
 
       // if ("email_response" in req.data) {
       //   setLogMessage(req.data.email_response)

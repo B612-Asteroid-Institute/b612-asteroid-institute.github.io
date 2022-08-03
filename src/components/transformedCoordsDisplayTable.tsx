@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
@@ -22,16 +22,6 @@ import Typography from '@mui/material/Typography';
 
 
 
-const data = {
-  "x": "123",
-  "y": "124",
-  "z": "124",
-  "vx": "124",
-  "vy": "412",
-  "vz": "4241",
-  'mjd_tdb': "124124",
-}
-
 
 interface OrbElement {
   key: string
@@ -48,13 +38,45 @@ function createData(orbElement: OrbElement) {
   return { key: orbElement.key, value: orbElement.value };
 }
 
+// function outputToString(elem: TransformedElements) {
+//   const csvString = [
+//     [
+//       "Item ID",
+//       "Item Reference"
+//     ],
+//     ...elem.orbElements.map(item => [
+//       item.key,
+//       String(item.value)
+// // +    ].map(str => `"${str.replace(/"/g, '\"')}"`)))
+//   ]
+//    .map(e => e.join(",")) 
+//    .join("\n")
+// return csvString
+// }
 
+function convertToCSV(arr: Array<OrbElement>) {
+
+  // @ts-ignore:
+  const array = [Object.keys(arr[0])].concat(arr)
+
+  return array.map(it => {
+    return Object.values(it).toString()
+  }).join('\n')
+}
 
 const TransformedCoordsDisplayTable = (props: any) => {
 
+  const [open, setOpen] = useState(false)
   const { transformedElements } = props
+  // const handleClick = () => {
+  //   setOpen(true)
+  //   navigator.clipboard.writeText(window.location.toString())
+  // }
 
   const rows = transformedElements.orbElements.map((orbElement: OrbElement ) => createData(orbElement))
+
+
+
 
   console.log(rows)
   return (
@@ -79,7 +101,7 @@ const TransformedCoordsDisplayTable = (props: any) => {
       </TableBody>
     </Table>
   </TableContainer>
-  <Button>Copy To CSV</Button>
+  <Button onClick={() => {navigator.clipboard.writeText(convertToCSV(transformedElements.orbElements))}}>Copy To CSV</Button>
   </>
 
 
