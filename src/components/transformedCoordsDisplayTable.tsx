@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
@@ -10,16 +9,9 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
-import { CSVLink } from 'react-csv'
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import TablePagination from '@mui/material/TablePagination';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-
 
 
 
@@ -28,34 +20,14 @@ interface OrbElement {
   value: number
 }
 
-interface TransformedElements {
-  coordSystem: string
-  orbElements: Array<OrbElement>
 
-}
-
-function createData(orbElement: OrbElement) {
+const createData = (orbElement: OrbElement) => {
   return { key: orbElement.key, value: orbElement.value };
 }
 
-// function outputToString(elem: TransformedElements) {
-//   const csvString = [
-//     [
-//       "Item ID",
-//       "Item Reference"
-//     ],
-//     ...elem.orbElements.map(item => [
-//       item.key,
-//       String(item.value)
-// // +    ].map(str => `"${str.replace(/"/g, '\"')}"`)))
-//   ]
-//    .map(e => e.join(",")) 
-//    .join("\n")
-// return csvString
-// }
 
-function convertToCSV(arr: Array<OrbElement>) {
-
+const convertToCSV = (arr: Array<OrbElement>) => {
+ 
   // @ts-ignore:
   const array = [Object.keys(arr[0])].concat(arr)
 
@@ -64,25 +36,21 @@ function convertToCSV(arr: Array<OrbElement>) {
   }).join('\n')
 }
 
+const capitalizeFirstLetter = (inString: String) => { 
+  return inString.charAt(0).toUpperCase() + inString.slice(1);
+}
+
 const TransformedCoordsDisplayTable = (props: any) => {
 
-  const [open, setOpen] = useState(false)
   const { transformedElements } = props
-  // const handleClick = () => {
-  //   setOpen(true)
-  //   navigator.clipboard.writeText(window.location.toString())
-  // }
 
   const rows = transformedElements.orbElements.map((orbElement: OrbElement ) => createData(orbElement))
-
-
-
 
   console.log(rows)
   return (
     <>
-    <div>{transformedElements.coordSystem}</div>
-    <TableContainer component={Paper} sx={{ maxWidth: 250 }}>
+    <div>{capitalizeFirstLetter(transformedElements.coordSystem)}</div>
+    <TableContainer component={Paper} sx={{ marginTop: 2, maxWidth: 320 }}>
     <Table  size="small" aria-label="a dense table">
       <TableBody>
 
@@ -95,7 +63,7 @@ const TransformedCoordsDisplayTable = (props: any) => {
             <TableCell component="th" scope="row">
               {row.key}
             </TableCell>
-            <TableCell align="right">{row.value}</TableCell>
+            <TableCell align="right">{row.value.toFixed(8)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -1,10 +1,7 @@
 // @ts-nocheck 
 import React, { useState } from 'react';
 import * as yup from 'yup';
-import PrecoveryFormDes from "./precoveryFormDes"
-import PrecoveryFormSingle from "./precoveryFormSingle"
 import TransformedCoordsDisplayTable from "./transformedCoordsDisplayTable"
-import ResultsTable from "./resultsTable"
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
@@ -19,45 +16,13 @@ import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
 import Alert from '@mui/material/Alert';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
 import AlertTitle from '@mui/material/AlertTitle';
-import LinearProgress from '@mui/material/LinearProgress';
-import { useForm, FormProvider, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { map, intersection } from 'lodash'
-import queryString from 'query-string';
-
-
-
-interface Observation {
-  orbit_id?: string
-  ra_deg: number
-  delta_ra_arcsec: number
-  dec_deg: number
-  delta_dec_arcsec: number
-  ra_sigma_arcsec: number
-  dec_sigma_arcsec: number
-  mag: number
-  mag_sigma: number
-  distance_arcsec: number
-  filter: string
-  healpix_id: string
-  mjd_utc: number
-  obscode: string
-  exposure_id: string
-  observation_id: string
-  pred_dec_deg: number
-  pred_ra_deg: number
-  pred_vdec_degpday: number
-  pred_vra_degpday: number
-}
-
-
-
+import { intersection } from 'lodash'
 
 
 interface DisplayError {
@@ -67,7 +32,7 @@ interface DisplayError {
 
 interface OrbElement {
   key: string
-  value: number
+  value: number | string
 }
 
 interface TransformedElements {
@@ -213,20 +178,25 @@ const validationSchema = Yup.object().shape({
 // get functions to build form with useForm() hook
 const OrbElementsTransformForm = () => {
   const [transformResults, setTransformResults] = useState<TransformedElements[]>([]);
-  const [sampleObjects, setSampleObjects] = useState<any[]>([]);
   const [displayError, setDisplayError] = useState<DisplayError>();
-  const [logMessage, setLogMessage] = useState<String>();
+  // const [logMessage, setLogMessage] = useState<String>();
 
-  var parsed = queryString.parse(window.location.href);
   const defaultValues = {
     "coordinateSystem": '',
-    "x": "-2.33942395564163",
-    "y": "-0.3658455137521852",
-    "z": "-1.009395236438459",
-    "vx": "0.002708132986793148",
-    "vy": "-0.01099826393246929",
-    "vz": "-0.002996736922710569",
-    'mjd_tdb': "57863.0",
+    // "x": "-2.33942395564163",
+    // "y": "-0.3658455137521852",
+    // "z": "-1.009395236438459",
+    // "vx": "0.002708132986793148",
+    // "vy": "-0.01099826393246929",
+    // "vz": "-0.002996736922710569",
+    // 'mjd_tdb': "57863.0",
+    "x": "",
+    "y": "",
+    "z": "",
+    "vx": "",
+    "vy": "",
+    "vz": "",
+    'mjd_tdb': "",
     "q": "",
     "e": "",
     "i": "",
@@ -249,32 +219,6 @@ const OrbElementsTransformForm = () => {
     mode: "onBlur",
     reValidateMode: "onBlur"
   })
-
-  const { control } = formMethods
-
-  // const {
-  //   fields: cartesianFields,
-  //   append: cartesianAppend,
-  //   remove: cartesianRemove
-  //   // I'm not sure why typescript defs have this as 'never'
-  //   // @ts-ignore:
-  // } = useFieldArray({ control, name: "cartesian"});
-
-  // const {
-  //   fields: keplerianFields,
-  //   append: keplerianAppend,
-  //   remove: keplerianRemove
-  //   // I'm not sure why typescript defs have this as 'never'
-  //   // @ts-ignore:
-  // } = useFieldArray({ control, name: "keplerian" });
-
-  // const {
-  //   fields: cometaryFields,
-  //   append: cometaryAppend,
-  //   remove: cometaryRemove
-  //   // I'm not sure why typescript defs have this as 'never'
-  //   // @ts-ignore:
-  // } = useFieldArray({ control, name: "cometarys" });
 
 
 
@@ -314,21 +258,18 @@ const OrbElementsTransformForm = () => {
     // Select the correct for values to send based on the chosen orbit type
     let req = { data: { matches: [], 'error message': undefined, email_response: undefined } }
     try {
-      const { coordinateSystem } = formMethods.getValues()
-      const commonInputs = { "orbit_type": coordinateSystem }
       if (formMethods.getValues("coordinateSystem") === "cartesian") {
         const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
-        req = await axios.post(`${process.env.REACT_APP_API_URL}adam/transform/orbital_elements/from_cartesian`, { x, y, z, vx, vy, vz, mjd_tdb })
+        req = await axios.post(`${process.env.REACT_APP_API_URL}transform/orbital_elements/from_cartesian`, { x, y, z, vx, vy, vz, mjd_tdb })
       }
       else if (formMethods.getValues("coordinateSystem") === "cometary") {
         const { q, e, i, an, ap, tp, mjd_tdbCom } = formMethods.getValues()
-        req = await axios.post(`${process.env.REACT_APP_API_URL}adam/transform/orbital_elements/from_cometary`, { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom })
+        req = await axios.post(`${process.env.REACT_APP_API_URL}transform/orbital_elements/from_cometary`, { q, e, i, an, ap, tp, "mjd_tdb": mjd_tdbCom })
       }
       else if (formMethods.getValues("coordinateSystem") === "keplerian") {
         const { a, eKep, iKep, anKep, apKep, ma, mjd_tdbKep } = formMethods.getValues()
         const stateVector = { a, e: eKep, i: iKep, an: anKep, ap: apKep, "M": ma, mjd_tdb: mjd_tdbKep }
-        req = await axios.post(`${process.env.REACT_APP_API_URL}adam/transform/orbital_elements/from_keplerian`, { ...stateVector })
-        // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
+        req = await axios.post(`${process.env.REACT_APP_API_URL}transform/orbital_elements/from_keplerian`, { ...stateVector })
       }
       console.log(req)
 
@@ -345,49 +286,17 @@ const OrbElementsTransformForm = () => {
             coordSystem: coordSystem,
             orbElements: orbElements
           })
-          
+
         }
         setTransformResults(transResults)
       }
-
-      // setTransformResults([
-      //   {
-      //     coordSystem: "cartesian",
-      //     orbElements: [
-      //       { key: "x", value: 1234, },
-      //       { key: "y", value: 1234, },
-      //       { key: "z", value: 1234, },
-      //       { key: "vx", value: 1234, },
-      //       { key: "vy", value: 1234, },
-      //       { key: "vz", value: 1234, },
-      //       { key: "mjd_tdb", value: 1234, },
-      //     ]
-      //   },
-      //   {
-      //     coordSystem: "keplerian",
-      //     orbElements: [
-      //       { key: "a", value: 1234, },
-      //       { key: "e", value: 1234, },
-      //       { key: "i", value: 1234, },
-      //       { key: "an", value: 1234, },
-      //       { key: "ap", value: 1234, },
-      //       { key: "ma", value: 1234, },
-      //       { key: "mjd_tdb", value: 1234, },
-      //     ]
-      //   },
-
-      // ])
-
-      // if ("email_response" in req.data) {
-      //   setLogMessage(req.data.email_response)
-      // }
 
     }
     catch (error: any) {
       console.log(error)
       setDisplayError({
         errorName: error.name,
-        errorDesc: "An Unhandled Error Occured"
+        errorDesc: "An Unhandled Server Error Occured"
       })
     }
 
@@ -399,8 +308,24 @@ const OrbElementsTransformForm = () => {
   // if the current input type's relevant fields are validated.
   const submitDisabled = () => {
 
-    // console.log(errorKeys, coreErrors, [...["start_mjd", "end_mjd", "radius"], ...errorKeys], coreErrors.length, specificErrors.length, allTouched)
-    return 1
+    let errorKeys = Object.keys(errors)
+    let touchedFields = Object.keys(formMethods.formState.touchedFields)
+    let specificErrors = []
+    let allTouched = false
+    if (formMethods.getValues("coordinateSystem") === "cartesian") {
+      specificErrors = intersection(["x", "y", "z", "vx", "vy", "vz", 'mjd_tdb'], errorKeys)
+      allTouched = intersection(["x", "y", "z", "vx", "vy", "vz", 'mjd_tdb'], touchedFields).length === 7
+    }
+    else if (formMethods.getValues("coordinateSystem") === "cometary") {
+      specificErrors = intersection(["q", "e", "i", "an", "ap", "tp", 'mjd_tdbCom'], errorKeys)
+      allTouched = intersection(["q", "e", "i", "an", "ap", "tp", 'mjd_tdbCom'], touchedFields).length === 7
+    }
+    else if (formMethods.getValues("coordinateSystem") === "keplerian") {
+      specificErrors = intersection(["a", "eKep", "iKep", "anKep", "apKep", "ma", 'mjd_tdbKep'], errorKeys)
+      allTouched = intersection(["a", "eKep", "iKep", "anKep", "apKep", "ma", 'mjd_tdbKep'], touchedFields).length === 7
+    }
+    console.log(errorKeys, specificErrors.length, allTouched)
+    return (specificErrors.length) > 0 || !allTouched
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -410,10 +335,12 @@ const OrbElementsTransformForm = () => {
   return (
     <FormProvider {...formMethods} >
       <form onSubmit={formMethods.handleSubmit(onSubmit)}>
-        <Grid container spacing={2}>
-
-          {/* Pick the input mode - single orbit or .des file input. Disabled out of Debug mode  */}
-
+        <Grid
+          container spacing={2}
+          direction="column"
+          sx={{ marginLeft: 3, marginTop: 3 }}
+        >
+          <div>Source Coordinate System</div>
 
           <Controller
             control={formMethods.control}
@@ -425,7 +352,8 @@ const OrbElementsTransformForm = () => {
                 value={value}
                 onChange={(e) => {
                   onChange(e)
-                  if (formMethods.formState.isSubmitted) formMethods.trigger()
+                  setDisplayError(null)
+                  setTransformResults([])
                 }}
               >
                 <FormControlLabel value="keplerian" control={<Radio />} label="Keplerian" />
@@ -446,25 +374,25 @@ const OrbElementsTransformForm = () => {
           {
             formMethods.getValues("coordinateSystem") === "keplerian" ?
               <>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"a"} label={'a (au)'} error={errors.a} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"eKep"} label={'e'} error={errors.eKep} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"iKep"} label={'i (deg)'} error={errors.iKep} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"anKep"} label={'an (deg)'} error={errors.anKep} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"apKep"} label={'ap (deg)'} error={errors.apKep} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"ma"} label={'ma (deg)'} error={errors.ma} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"mjd_tdbKep"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbKep} />
                 </Grid>
               </>
@@ -475,25 +403,25 @@ const OrbElementsTransformForm = () => {
           {
             formMethods.getValues("coordinateSystem") === "cartesian" ?
               <>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"x"} label={'X (au)'} error={errors.x} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"y"} label={'Y (au)'} error={errors.y} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"z"} label={'Z (au)'} error={errors.z} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"vx"} label={'VX (au/day)'} error={errors.vx} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"vy"} label={'VY (au/day)'} error={errors.vy} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"vz"} label={'VZ (au/day)'} error={errors.vz} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"mjd_tdb"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdb} />
                 </Grid>
               </>
@@ -504,25 +432,25 @@ const OrbElementsTransformForm = () => {
           {
             formMethods.getValues("coordinateSystem") === "cometary" ?
               <>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"q"} label={'q (au)'} error={errors.q} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"e"} label={'e'} error={errors.e} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"i"} label={'i (deg)'} error={errors.i} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"an"} label={'an (deg)'} error={errors.an} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"ap"} label={'ap (deg)'} error={errors.ap} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"tp"} label={'tp (MJD)'} error={errors.tp} />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={6} md={4}>
                   <ControlledText name={"mjd_tdbCom"} label={'Epoch (MJD TDB)'} error={errors.mjd_tdbCom} />
                 </Grid>
               </>
@@ -537,12 +465,11 @@ const OrbElementsTransformForm = () => {
 
         {transformResults.length > 0 &&
 
-          <Grid container spacing={2}>
+          <Grid container spacing={2} alignItems="stretch">
             {transformResults.map((transformResult) => (
-              <Grid item xs={4}>
+              <Grid item xs={12} sm={6} md={4}>
                 <TransformedCoordsDisplayTable
                   transformedElements={transformResult}
-
                 />
 
               </Grid>
@@ -552,13 +479,24 @@ const OrbElementsTransformForm = () => {
         }
 
         {!formMethods.formState.isSubmitting ?
-          <Button sx={{ marginTop: 3 }} color="primary" variant="contained" fullWidth type="submit" >
+          <Button sx={{ marginTop: 3 }} color="primary" variant="contained" fullWidth type="submit" disabled={submitDisabled()} >
             {formMethods.formState.isSubmitted ? "Resubmit" : "Submit"}
           </Button> :
           <LoadingButton sx={{ marginTop: 3 }} color="primary" loading fullWidth variant="outlined">
             Submit
           </LoadingButton>
         }
+
+
+        {/* Catch-all error message */}
+        {
+          displayError?.errorName &&
+          <Alert sx={{ marginTop: 3 }} severity="error">
+            <AlertTitle>{displayError.errorName}</AlertTitle>
+            {displayError.errorDesc}
+          </Alert>
+        }
+
 
       </form>
     </FormProvider>
