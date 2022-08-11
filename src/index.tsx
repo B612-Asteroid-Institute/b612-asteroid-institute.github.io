@@ -8,6 +8,7 @@ import App from './App';
 import Precovery from './routes/precovery';
 import About from './routes/about';
 import reportWebVitals from './reportWebVitals';
+import OrbElementsTransform from './routes/orbElementsTransform';
 
 ReactDOM.render(
 
@@ -16,6 +17,7 @@ ReactDOM.render(
       <Routes>
         <Route path="/" element={<App />}/>
         <Route path="precovery" element={<Precovery />} />
+        <Route path="orbElementsTransform" element={<OrbElementsTransform />} />
         <Route path="about" element={<About />} />
     </Routes>
     </React.StrictMode>
