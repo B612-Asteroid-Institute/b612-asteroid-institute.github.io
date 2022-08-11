@@ -1,7 +1,5 @@
 import React from 'react';
 import Header from "../components/header"
-// import Alert from '@mui/material/Alert';
-import PrecoveryForm from "../components/precoveryForm"
 import '../css/App.css';
 import '../vendor/bootstrap/css/bootstrap.min.css'
 import '../vendor/bootstrap-icons/bootstrap-icons.css'
