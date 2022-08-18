@@ -179,17 +179,9 @@ const validationSchema = Yup.object().shape({
 const OrbElementsTransformForm = () => {
   const [transformResults, setTransformResults] = useState<TransformedElements[]>([]);
   const [displayError, setDisplayError] = useState<DisplayError>();
-  // const [logMessage, setLogMessage] = useState<String>();
 
   const defaultValues = {
-    "coordinateSystem": '',
-    // "x": "-2.33942395564163",
-    // "y": "-0.3658455137521852",
-    // "z": "-1.009395236438459",
-    // "vx": "0.002708132986793148",
-    // "vy": "-0.01099826393246929",
-    // "vz": "-0.002996736922710569",
-    // 'mjd_tdb': "57863.0",
+
     "x": "",
     "y": "",
     "z": "",
@@ -250,10 +242,8 @@ const OrbElementsTransformForm = () => {
 
   const onSubmit = async (data: any) => {
 
+    setDisplayError(undefined)
     setTransformResults([])
-    // This sets up an interval timer to handle the progress bar. it is cleared on return
-
-
 
     // Select the correct for values to send based on the chosen orbit type
     let req = { data: { matches: [], 'error message': undefined, email_response: undefined } }
@@ -272,7 +262,6 @@ const OrbElementsTransformForm = () => {
         req = await axios.post(`${process.env.REACT_APP_API_URL}transform/orbital_elements/from_keplerian`, { ...stateVector })
       }
       console.log(req)
-
 
       if (req.data) {
         let transResults = []
@@ -330,7 +319,6 @@ const OrbElementsTransformForm = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const watchFields = formMethods.watch(["coordinateSystem"]);
-
 
   return (
     <FormProvider {...formMethods} >

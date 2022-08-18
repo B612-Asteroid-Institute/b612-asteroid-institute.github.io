@@ -12,6 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import isString from 'lodash'
 
 
 
@@ -63,7 +64,7 @@ const TransformedCoordsDisplayTable = (props: any) => {
             <TableCell component="th" scope="row">
               {row.key}
             </TableCell>
-            <TableCell align="right">{row.value.toFixed(8)}</TableCell>
+            <TableCell align="right">{isString(row.value) ? row.value : row.value.toFixed(8)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

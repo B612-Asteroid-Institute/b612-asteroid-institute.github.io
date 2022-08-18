@@ -31,7 +31,7 @@ function OrbElementsTransform() {
 
               <br /><br /> */}
               <h3>ADAM :: Orbital Elements Transformation</h3>
-              <b>Description.</b>
+              <b>Convert orbital elements into cartesian, comertary, and keplerian elements</b>
 
               {/* <br /><br />
 
@@ -57,9 +57,9 @@ function OrbElementsTransform() {
               </ul> */}
 
 
-              <br />
+              <br /><br />
 
-              Please suggest potential features or report any bugs to our <a href={"https://github.com/B612-Asteroid-Institute/precovery/issues"}>GitHub Issue Tracker</a>.
+              Enter your state vector in one of the three systems and press submit to convert. All distances are in AU, velocities in AU/day, and angles in degrees. Dates are given in Modified Julian Date. The results may be copied directly as a CSV.
               <br /> <br />
 
             </div>
