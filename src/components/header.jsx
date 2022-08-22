@@ -81,11 +81,17 @@ function Header() {
         <ListItem >
           <Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link>
         </ListItem>
+        <ListItem >
+          <Link className="nav-link" to={`/orbElementsTransform`}>Orbital Elements Tranformation</Link>
+        </ListItem>
       </List>
       <Divider />
       <List>
         <ListItem >
           <a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a>
+        </ListItem>
+        <ListItem >
+          <a className="nav-link scrollto" href="https://b612foundation.org/">B612 Foundation</a>
         </ListItem>
       </List>
     </Box>
@@ -136,7 +142,7 @@ function Header() {
 
           <nav id="navbar" className="navbar">
             <ul>
-              <li><Link className="nav-link" to={`/about`}>About</Link></li>\
+              <li><Link className="nav-link" to={`/about`}>About</Link></li>
               <li className="dropdown">
                 
                 <a href="#/precovery">
@@ -145,9 +151,11 @@ function Header() {
                 </a>
                 <ul>
                   <li><Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link></li>
+                  <li><Link className="nav-link" to={`/orbElementsTransform`}>Orbital Elements Tranformation</Link></li>
                 </ul>
               </li>
               <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
+              <li><a className="nav-link scrollto" href="https://b612foundation.org/">B612 Foundation</a></li>
             </ul>
             {width < 991 ?
               <DrawerNavigation /> : <></>

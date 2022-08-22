@@ -189,6 +189,7 @@ const validationSchema = Yup.object().shape({
       "is": true,
       "then": Yup.string().required("Please enter an email").email("Must be a valid email")
     }),
+  "mbdbSearchInputail": Yup.string().notRequired(),
 
 });
 
@@ -235,6 +236,7 @@ const PrecoveryForm = () => {
     "start_mjd": "56193",
     "end_mjd": "58804",
     "radius": "5",
+    "mbdbSearchInput": ""
   }
 
   const formMethods = useForm({
@@ -293,7 +295,7 @@ const PrecoveryForm = () => {
     try {
       if (formMethods.getValues("inputType") === "single") {
         const { coordinateSystem, start_mjd, end_mjd, radius, email, do_cutouts } = formMethods.getValues()
-        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, email, do_cutouts,  "tolerance": Number(radius) * (1 / 3600) }
+        const commonInputs = { "orbit_type": coordinateSystem, start_mjd, end_mjd, email, do_cutouts, "tolerance": Number(radius) * (1 / 3600) }
         if (formMethods.getValues("coordinateSystem") === "cartesian") {
           const { x, y, z, vx, vy, vz, mjd_tdb } = formMethods.getValues()
           req = await axios.post(`${process.env.REACT_APP_API_URL}precovery/singleorbit`, { x, y, z, vx, vy, vz, mjd_tdb, ...commonInputs })
@@ -309,7 +311,7 @@ const PrecoveryForm = () => {
           // req = await axios.post("https://precovery.api.b612.ai/precovery/singleorbit", { "orbit_type": formMethods.getValues("coordinateSystem"), ...stateVector }) 
         }
         console.log(req)
-        
+
         if (req.data['error message']) {
           setDisplayError({
             errorName: "Error",
@@ -384,7 +386,8 @@ const PrecoveryForm = () => {
     "desInput",
     "coordinateSystem",
     "sampleObjectPicker",
-    "do_cutouts"
+    "do_cutouts",
+    "mbdbSearchInput"
   ]);
 
   return (
@@ -417,10 +420,7 @@ const PrecoveryForm = () => {
         <br></br>
 
         <br></br>
-
-        {/* Picking start/end mjd limits and threshold */}
-        {/* This component is disabled out of */}
-        {parsed.debug === "true" &&
+        {/* {parsed.debug === "true" && */}
           <>
             <Grid container spacing={2}>
               <Grid item xs={4}>
@@ -468,8 +468,7 @@ const PrecoveryForm = () => {
 
             <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
           </>
-        }
-        
+        {/* } */}
         {
           formMethods.getValues("inputType") === "single" ?
             <PrecoveryFormSingle
