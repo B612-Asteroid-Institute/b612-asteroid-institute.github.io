@@ -31,7 +31,7 @@ function OrbElementsTransform() {
 
               <br /><br /> */}
               <h3>ADAM :: Orbital Elements Transformation</h3>
-              <b>Convert orbital elements into cartesian, comertary, and keplerian elements</b>
+              <b>Convert orbital elements into cartesian, cometary, and keplerian elements</b>
 
               {/* <br /><br />
 
