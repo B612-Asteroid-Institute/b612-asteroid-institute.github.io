@@ -90,6 +90,9 @@ function Header() {
         <ListItem >
           <a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a>
         </ListItem>
+        <ListItem >
+          <a className="nav-link scrollto" href="https://b612foundation.org/">B612 Foundation</a>
+        </ListItem>
       </List>
     </Box>
   )
@@ -152,6 +155,7 @@ function Header() {
                 </ul>
               </li>
               <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
+              <li><a className="nav-link scrollto" href="https://b612foundation.org/">B612 Foundation</a></li>
             </ul>
             {width < 991 ?
               <DrawerNavigation /> : <></>
