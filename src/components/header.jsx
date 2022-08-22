@@ -142,7 +142,7 @@ function Header() {
 
           <nav id="navbar" className="navbar">
             <ul>
-              <li><Link className="nav-link" to={`/about`}>About</Link></li>\
+              <li><Link className="nav-link" to={`/about`}>About</Link></li>
               <li className="dropdown">
                 
                 <a href="#/precovery">
