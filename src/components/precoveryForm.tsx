@@ -317,12 +317,13 @@ const PrecoveryForm = () => {
             errorName: "Error",
             errorDesc: req.data['error message']
           })
-          clearInterval(timer)
-          return
         }
-        const matches = req.data.matches
-        setPrecoveryResults(matches)
 
+        if ("matches" in req.data) {
+          const matches = req.data.matches
+          setPrecoveryResults(matches)
+        }
+        
         if ("email_response" in req.data) {
           setLogMessage(req.data.email_response)
         }
