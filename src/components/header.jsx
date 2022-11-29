@@ -82,7 +82,7 @@ function Header() {
           <Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link>
         </ListItem>
         <ListItem >
-          <Link className="nav-link" to={`/orbElementsTransform`}>Orbital Elements Tranformation</Link>
+          <Link className="nav-link" to={`/orbElementsTransform`}>Orbital Elements Transformation</Link>
         </ListItem>
       </List>
       <Divider />
