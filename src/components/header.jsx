@@ -151,7 +151,7 @@ function Header() {
                 </a>
                 <ul>
                   <li><Link className="nav-link" to={`/precovery?user=${user}`}>Precovery</Link></li>
-                  <li><Link className="nav-link" to={`/orbElementsTransform`}>Orbital Elements Tranformation</Link></li>
+                  <li><Link className="nav-link" to={`/orbElementsTransform`}>Orbital Elements Transformation</Link></li>
                 </ul>
               </li>
               <li><a className="nav-link scrollto" href="https://github.com/b612-asteroid-institute">GitHub&nbsp;<span className="bi bi-github"></span></a></li>
