@@ -86,7 +86,7 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 997;
   transition: all 0.5s;
   background: #052c3f;
-  padding: 22px 0;
+  padding: 17px 0;
 }
 #header.header-transparent {
   background: none;
@@ -113,11 +113,17 @@ h1, h2, h3, h4, h5, h6 {
 #header .logo img {
   padding: 0;
   margin: 0;
-  max-height: 60px;
+  max-height: 70px;
 }
 @media (max-width: 768px) {
   #header .logo h1 {
     font-size: 28px;
+  }
+
+  #header .logo img {
+    padding: 0;
+    margin-left: 10px;
+    max-height: 55px;
   }
 }
 
@@ -309,7 +315,9 @@ h1, h2, h3, h4, h5, h6 {
 #hero {
   width: 100%;
   height: 70vh;
-  background: url("../img/solarsystem.jpg") top center;
+  background: 
+  linear-gradient(to bottom, rgba(20, 20, 20, 0.74) , rgba(255, 255, 255, 0)60%),
+  url("../img/solarsystem.jpg") top center;
   background-size: cover;
   position: relative;
 }
@@ -408,7 +416,8 @@ h1, h2, h3, h4, h5, h6 {
 #heroSplash {
   width: 100%;
   height: 100vh;
-  background: url("../img/solarsystem.jpg") top center;
+  background: linear-gradient(to bottom, rgba(20, 20, 20, 0.74) , rgba(255, 255, 255, 0)60%),
+  url("../img/solarsystem.jpg") top center;
   background-size: cover;
   position: relative;
 }
@@ -446,7 +455,8 @@ h1, h2, h3, h4, h5, h6 {
 #heroThin {
   width: 100%;
   height: 104px;
-  background: url("../img/solarsystem.jpg") top center;
+  background: linear-gradient(to bottom, rgba(20, 20, 20, 0.74) , rgba(255, 255, 255, 0)60%),
+  url("../img/solarsystem.jpg") top center;
   background-size: cover;
   position: relative;
 }
@@ -1285,7 +1295,7 @@ section {
 # Footer
 --------------------------------------------------------------*/
 #footer {
-  background: url("../img/footer-bg.jpg") top center no-repeat;
+  background: url("../img/solarsystem.jpg") bottom center no-repeat;
   color: #fff;
   font-size: 14px;
   position: relative;

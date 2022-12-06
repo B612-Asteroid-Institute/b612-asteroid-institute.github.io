@@ -137,7 +137,7 @@ function Header() {
           <div className="logo">
             <h1>
               <Link to="/">
-                <img src={require("../img/asteroid-institute.png")} alt="B612 ADAM" className="img-fluid" /></Link></h1>
+                <img src={require("../img/asteroid-institute-lighter.png")} alt="B612 ADAM" className="img-fluid" /></Link></h1>
           </div>
 
           <nav id="navbar" className="navbar">
