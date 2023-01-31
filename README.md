@@ -1,6 +1,6 @@
 # ADAM website
 
-Website for the ADAM Platform (Asteroid Discovery, Analysis, Mapping)
+Website for the ADAM Platform (Asteroid Discovery Analysis Mapping)
 
 ADAM's goal is to help build a map of the Solar System that makes it easy to share, organize, calculate, visualize, and understand trajectories and location information for space.
 

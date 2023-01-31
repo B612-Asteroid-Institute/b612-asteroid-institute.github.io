@@ -18,7 +18,7 @@ function About() {
           <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank" rel="noreferrer" >Image by Eleanor Lutz</a>
         </div>
         <div className="hero-container">
-          <h1>Asteroid Discovery, Analysis, and Mapping</h1>
+          <h1>Asteroid Discovery Analysis and Mapping</h1>
           <h2>The Computational Engine to Map our Solar System
           </h2>
         </div>
@@ -30,7 +30,7 @@ function About() {
 
           <div className="row content">
             <div className="col-lg-6">
-              <h2>The ADAM Platform: Asteroid Discovery, Analysis, and Mapping</h2>
+              <h2>The ADAM Platform: Asteroid Discovery Analysis and Mapping</h2>
               <h3>To help build a map of the Solar System that makes it easy to share, organize, calculate, visualize, and understand trajectories and location information for space. </h3>
             </div>
             <div className="col-lg-6 pt-4 pt-lg-0">
@@ -41,7 +41,7 @@ function About() {
                 exploration, economic development, and the protection of the
                 Earth from asteroid impacts.
                 To help support this goal, we are building <b>ADAM</b>,
-                the <b>Asteroid Discovery, Analysis and Mapping</b> computational platform.
+                the <b>Asteroid Discovery Analysis and Mapping</b> computational platform.
               </p>
               <p>
                 ADAM implements state-of-the-art algorithms developed in collaboration with

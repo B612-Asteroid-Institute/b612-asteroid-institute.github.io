@@ -19,7 +19,7 @@ function App() {
           <a href="https://eleanorlutz.com/mapping-18000-asteroids" target="_blank" rel="noreferrer">Image by Eleanor Lutz</a>
         </div>
         <div className="hero-container">
-          <h1>Asteroid Discovery, Analysis, and Mapping</h1>
+          <h1>Asteroid Discovery Analysis and Mapping</h1>
           <h2>The Computational Engine to Map our Solar System
           </h2>
         </div>
